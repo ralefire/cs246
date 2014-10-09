@@ -11,6 +11,6 @@ package scripturefinder;
  */
 public class hellpworld {
     public void hello() {
-        System.out.println("Hello GitHub world\n. Testing...");
+        System.out.println("Hello GitHub \n. Testing...");
     }
 }
