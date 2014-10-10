@@ -9,6 +9,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 
-    private String fileName = "C:/money.txt";
+    private String fileName = "C:\\money.txt";
 
     public void setFileName(String input)
     {
@@ -88,8 +90,24 @@ public class Parser {
         return null;
     }
 	
-        public ArrayList<String> parseTopics(String input) {
-            return  null;
+        public List<String> parseTopics(String input) throws IOException {
+            Properties props = new ReadValidFiles().getProps();
+            String termsPath = props.getProperty("validTopicsPath");
+            //String scripturesPath = props.getProperty("validScripturesPath");
+            
+            BufferedReader in = new BufferedReader(new FileReader(termsPath));
+            String line; //used to read the file line by line
+            List<String> validTopics = new ArrayList<>();
+            
+            while ((line = in.readLine()) != null) {
+                validTopics.add(line);
+            }
+            
+            for (String topic : validTopics) {
+                System.out.println(topic);
+            }
+            
+            return validTopics;
         }
     
 }

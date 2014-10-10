@@ -39,7 +39,7 @@ public class XML implements Runnable {
         
         //set default xml file location
         if (fileName.equals("")) {
-            fileName = "C:/XML.xml";
+            fileName = "C:\\Users\\Admin\\Documents\\NetBeansProjects\\ScriptureFinder\\src\\scripturefinder";
         }
         
         //get the document builder factory
