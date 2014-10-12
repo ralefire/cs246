@@ -21,11 +21,12 @@ public class ReadValidFiles {
 
             Properties prop = new Properties();
             String propFileName = "config.properties";
+            prop.load(getClass().getResourceAsStream("/resources/" + propFileName));
             
-            BufferedReader in = new BufferedReader(new FileReader(propFileName));
-            prop.load(in);
+            //BufferedReader in = new BufferedReader(new FileReader(propFileName));
+            //prop.load(in);
             
-            if (in == null) {
+            if (prop == null) {
                     throw new FileNotFoundException("property file '" + propFileName + "' not found in the classpath");
             }
             

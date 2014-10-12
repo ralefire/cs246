@@ -27,8 +27,9 @@ public class Parser {
         fileName = input;
     }
 
-    public ArrayList<Scripture> parseScripture(String input) {
+    public ArrayList<Scripture> parseScripture() throws IOException {
 
+        /*
         System.out.println("Opening file: " + fileName);
 
         try {
@@ -83,10 +84,33 @@ public class Parser {
               while (mChap.find( )) {
                      System.out.println("Found: " + mChap.group(2) + mChap.group(3) );
                   }
+              
+             
+        
+        
             }
         } catch (IOException e) {
                 System.out.println("Error opening file: " + fileName);
         }
+                */ 
+        
+            Properties props = new ReadValidFiles().getProps();
+            String scripturesPath = props.getProperty("validScripturesPath");
+            
+            BufferedReader in = new BufferedReader(new FileReader(scripturesPath));
+            String line; //used to read the file line by line
+            List<String> validScriptures = new ArrayList<>();
+
+            while ((line = in.readLine()) != null) {
+                validScriptures.add(line);
+            }
+
+            System.out.println("Checking for valid scriptures file...");
+            for (String script : validScriptures) {
+                System.out.println(script);
+            }
+     
+        
         return null;
     }
 	
@@ -103,6 +127,7 @@ public class Parser {
                 validTopics.add(line);
             }
             
+            System.out.println("Checking for valid topics file...");
             for (String topic : validTopics) {
                 System.out.println(topic);
             }

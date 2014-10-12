@@ -33,13 +33,12 @@ public class XML implements Runnable {
     public List<Entry> parseXmlFile(String fileName) throws org.xml.sax.SAXException {
         
         List<Entry> entryList = new ArrayList(); 
-        List<String> topicList = new ArrayList();
-        List<Scripture> scriptureList = new ArrayList();
+
         Document dom = null;
         
         //set default xml file location
         if (fileName.equals("")) {
-            fileName = "C:\\Users\\Admin\\Documents\\NetBeansProjects\\ScriptureFinder\\src\\scripturefinder";
+            fileName = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder";
         }
         
         //get the document builder factory
@@ -75,11 +74,12 @@ public class XML implements Runnable {
 
             //Loop and build Entry objects
             for (int i = 0;  i < eList.getLength(); i++) {
-
+        List<String> topicList = new ArrayList();
+        List<Scripture> scriptureList = new ArrayList();
                 Element entryElem = (Element)eList.item(i); //Get entry elements
                 Entry entry = new Entry(); //Create entry to add to entry list
                 NodeList topics = entryElem.getElementsByTagName("topic"); //get topic nodes
-
+                
                 //add topic node content to topic list
                 for (int j = 0; j < topics.getLength(); j++) {
                    String topic = ((Element)topics.item(j)).getTextContent();

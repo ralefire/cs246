@@ -36,7 +36,7 @@ public class Entry {
         scripture = null;
     }
     
-    public List<String> getTopic() {
+    public List<String> getTopics() {
     
         return topics;
     }
@@ -82,18 +82,33 @@ public class Entry {
     }
     
     public void display() {
-        System.out.println("Entry Date: " + date.toString());
-        System.out.println("Scriptures: ");
         for (Scripture s : scripture) {
             s.display();
         }
+        System.out.println("Entry Date: " + date.toString());
+        System.out.println("Scriptures: ");
+
+        
         System.out.println("Topics:");
         for (String s : topics) {
             System.out.println("\t" + s);
         }
         System.out.println("Content:\n\t" + content);
-        
-        
-       
     }
+    
+        public void displayScripturesWithDates() {
+        for (Scripture s : scripture) {
+            s.display();
+        }
+        System.out.println("Entry Date: " + date.toString());
+        System.out.println("Scriptures: ");
+
+        
+        System.out.println("Topics:");
+        for (String s : topics) {
+            System.out.println("\t" + s);
+        }
+        System.out.println("Content:\n\t" + content);
+    }
+    
 }
