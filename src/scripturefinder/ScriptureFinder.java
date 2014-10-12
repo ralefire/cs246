@@ -1,5 +1,5 @@
 /**
- * Milestone 1 - basic File I/O (1_FileIO)
+ * Milestone 3b
  * @author Cameron Lilly
  * Collaboration: Bryce Call helped explain what static meant in Java
  */
@@ -17,112 +17,35 @@ import org.xml.sax.SAXException;
 /**
  * Main Class.
  * This program accepts a command line argument filename then parses out
- * and displays the scripture references
+ * and displays the scripture and topic references
  */
 public class ScriptureFinder {
 
     public static void main(String[] args) throws IOException {
+        String fileName;
 
-            String fileName;
+        // default to XML path if no command line arguments are present
+        if (args.length == 0) {
+                fileName = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml"; 
+        } else {
+                fileName = args[0];
+        }
 
-            // default to XML path if no command line arguments are present
-            if (args.length == 0) {
-                    fileName = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml"; 
-            } else {
-                    fileName = args[0];
-            }
-            
-            XML parser = new XML();
-            List<Entry> entries = new ArrayList();
-            
-            try {
-                entries = parser.parseXmlFile(fileName);
-            } catch (SAXException ex) {
-                Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            List<Scripture> sList = new ArrayList();
-            List<String> books = new ArrayList();
-            List<String> tList = new ArrayList();
-            //List<String> displayedBooks = new ArrayList();
-            Map<String, List<Entry>> sMap = new TreeMap();
-            Map<String, List<Entry>> tMap = new TreeMap();
-            
-//            for (Entry entry : entries) {
-//                entry.display();
-//            }
-            
-            for (Entry entry : entries) {
+        //Create XML reader object
+        XML parser = new XML();
+        List<Entry> entries = new ArrayList();
 
-                sList = entry.getScriptures();
-                tList = entry.getTopics();
-                List<Entry> entryList = new ArrayList();
-                entryList.add(entry);
-                
-//                System.out.println(entry.getDate().toString());
-//                for (Scripture s : sList) {
-//                    System.out.println(s.getBook());
-//                }
-                
-                for (Scripture s : sList) {
-                    String book = s.getBook();
-                    List<Entry> tempEList = sMap.putIfAbsent(book, entryList);
-                    
-                    if (tempEList != null) {
-                        Boolean exists = false;
-                        for (Entry e : tempEList) {
-                            if (e.equals(entry)) {
-                                exists = true;
-                                break;
-                            } 
-                        }
-                        
-                        if (!exists) {
-                            tempEList.add(entry);
-                            sMap.put(book, tempEList);
-                        }
-                    }
-                }
-                
-                for (String t : tList) {
-                    List<Entry> tempEList = tMap.putIfAbsent(t, entryList);
-                    
-                    if (tempEList != null) {
-                        Boolean exists = false;
-                        for (Entry e : tempEList) {
-                            if (e.equals(entry)) {
-                                exists = true;
-                                break;
-                            } 
-                        }
-                        
-                        if (!exists) {
-                            tempEList.add(entry);
-                            sMap.put(t, tempEList);
-                        }
-                    }
-                }
-            }
-            
-            for(String key : sMap.keySet()) {
-                List<Entry> tempEList = sMap.get(key);
-                System.out.println(key);
-                
-                for (Entry e : tempEList) {
-                    System.out.println("\t" + e.getDate().toString());
-                }
-            }          
-          
-            
-            for(String key : tMap.keySet()) {
-                List<Entry> tempEList = tMap.get(key);
-                System.out.println(key);
-                
-                for (Entry e : tempEList) {
-                    System.out.println("\t" + e.getDate().toString());
-                }
-            }
-            
+        //read the xml file
+        try {
+            entries = parser.parseXmlFile(fileName);
+        } catch (SAXException ex) {
+            Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        ScriptureFinder journal = new ScriptureFinder();
+        if (!entries.isEmpty())
+           journal.displayBooksAndTopics(entries);
+        
 /*Tests that the validity file is working by reading the file and displaying the results*/
 //            Parser parseEntry = new Parser();
 //            parseEntry.parseTopics("Is there a Faith topic in here?");
@@ -139,4 +62,88 @@ public class ScriptureFinder {
 //            System.out.println(termsPath + "\n" + scripturesPath);
             
     }
+    
+    private void displayBooksAndTopics(List<Entry> entries) {
+    
+        List<Scripture> sList = new ArrayList(); //list of scripture objects
+        List<String> books = new ArrayList(); //list of books
+        List<String> tList = new ArrayList(); //List of topics
+        Map<String, List<Entry>> sMap = new TreeMap(); // map of form <book, entry list>
+        Map<String, List<Entry>> tMap = new TreeMap(); // map of form <topic, entry list>
+
+        //Iterate through entries list
+        for (Entry entry : entries) {
+
+            sList = entry.getScriptures();
+            tList = entry.getTopics();
+            List<Entry> entryList = new ArrayList();
+            entryList.add(entry);
+
+            for (Scripture s : sList) {
+                String book = s.getBook();
+                List<Entry> tempEList = sMap.putIfAbsent(book, entryList); //add if book absent
+
+                //if book isn't absent, check if the entry is already added
+                if (tempEList != null) {
+                    Boolean exists = false;
+                    for (Entry e : tempEList) {
+                        if (e.equals(entry)) {
+                            exists = true;
+                            break;
+                        } 
+                    }
+
+                    // if entry not yet added, add it
+                    if (!exists) {
+                        tempEList.add(entry);
+                        sMap.put(book, tempEList);
+                    }
+                }
+            }
+
+            for (String t : tList) {
+                List<Entry> tempEList = tMap.putIfAbsent(t, entryList); // add topic if absent
+
+                //if topic isn't absent, check if entry is added yet
+                if (tempEList != null) {
+                    Boolean exists = false;
+                    for (Entry e : tempEList) {
+                        if (e.equals(entry)) {
+                            exists = true;
+                            break;
+                        } 
+                    }
+
+                    // if entry isn't already added, add it
+                    if (!exists) {
+                        tempEList.add(entry);
+                        sMap.put(t, tempEList);
+                    }
+                }
+            }
+        }
+
+        // display books and matching entry dates without duplicates
+        System.out.println("Scripture References:");
+        for(String key : sMap.keySet()) {
+            List<Entry> tempEList = sMap.get(key);
+            System.out.println(key);
+
+            for (Entry e : tempEList) {
+                System.out.println("\t" + e.getDate().toString());
+            }
+        }          
+
+        // display topics and matching entry dates without duplicates
+        System.out.println("\nTopic References:");
+        for(String key : tMap.keySet()) {
+            List<Entry> tempEList = tMap.get(key);
+            System.out.println(key);
+
+            for (Entry e : tempEList) {
+                System.out.println("\t" + e.getDate().toString());
+            }
+        }
+    }
+    
 }
