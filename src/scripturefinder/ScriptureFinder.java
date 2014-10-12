@@ -5,15 +5,11 @@
  */
 package scripturefinder;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.TreeMap;
-import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.xml.sax.SAXException;
@@ -88,24 +84,24 @@ public class ScriptureFinder {
                     }
                 }
                 
-//                for (String t : tList) {
-//                    List<Entry> tempEList = tMap.putIfAbsent(t, entryList);
-//                    
-//                    if (tempEList != null) {
-//                        Boolean exists = false;
-//                        for (Entry e : tempEList) {
-//                            if (e.equals(entry)) {
-//                                exists = true;
-//                                break;
-//                            } 
-//                        }
-//                        
-//                        if (!exists) {
-//                            tempEList.add(entry);
-//                            sMap.put(t, tempEList);
-//                        }
-//                    }
-//                }
+                for (String t : tList) {
+                    List<Entry> tempEList = tMap.putIfAbsent(t, entryList);
+                    
+                    if (tempEList != null) {
+                        Boolean exists = false;
+                        for (Entry e : tempEList) {
+                            if (e.equals(entry)) {
+                                exists = true;
+                                break;
+                            } 
+                        }
+                        
+                        if (!exists) {
+                            tempEList.add(entry);
+                            sMap.put(t, tempEList);
+                        }
+                    }
+                }
             }
             
             for(String key : sMap.keySet()) {
@@ -118,18 +114,22 @@ public class ScriptureFinder {
             }          
           
             
-//            for(String key : tMap.keySet()) {
-//                List<Entry> tempEList = tMap.get(key);
-//                System.out.println(key);
-//                
-//                for (Entry e : tempEList) {
-//                    System.out.println("\t" + e.getDate().toString());
-//                }
-//            }
+            for(String key : tMap.keySet()) {
+                List<Entry> tempEList = tMap.get(key);
+                System.out.println(key);
+                
+                for (Entry e : tempEList) {
+                    System.out.println("\t" + e.getDate().toString());
+                }
+            }
             
-            Parser parseEntry = new Parser();
-           // parseEntry.parseTopics("Is there a Faith topic in here?");
+/*Tests that the validity file is working by reading the file and displaying the results*/
+//            Parser parseEntry = new Parser();
+//            parseEntry.parseTopics("Is there a Faith topic in here?");
+//            parseEntry.parseScripture();
             
+            
+/*Tests that the properties file is working by displaying the values in the properties file*/
 //            Properties props = new ReadValidFiles().getProps();
 //            String termsPath = props.getProperty("validTopicsPath");
 //            String scripturesPath = props.getProperty("validScripturesPath");
@@ -137,5 +137,6 @@ public class ScriptureFinder {
 //            BufferedReader in = new BufferedReader(new FileReader(termsPath));
 //            
 //            System.out.println(termsPath + "\n" + scripturesPath);
+            
     }
 }
