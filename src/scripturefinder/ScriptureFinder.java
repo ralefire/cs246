@@ -117,7 +117,7 @@ public class ScriptureFinder {
                     // if entry isn't already added, add it
                     if (!exists) {
                         tempEList.add(entry);
-                        sMap.put(t, tempEList);
+                        tMap.put(t, tempEList);
                     }
                 }
             }
