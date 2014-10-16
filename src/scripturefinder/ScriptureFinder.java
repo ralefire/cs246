@@ -22,45 +22,56 @@ import org.xml.sax.SAXException;
 public class ScriptureFinder {
 
     public static void main(String[] args) throws IOException {
-        String fileName;
-
-        // default to XML path if no command line arguments are present
-        if (args.length == 0) {
-                fileName = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml"; 
-        } else {
-                fileName = args[0];
+        String readXMLFile;
+        String iTxtFile;
+        String oXMLFile;
+        String oTXTFile;
+ 
+        switch (args.length) {
+            case 1: 
+                readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
+                iTxtFile = args[0];
+                oXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XMLOutput.xml";
+                oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
+                break;
+            case 2:
+                 readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
+                iTxtFile = args[0];
+                oXMLFile = args[1];
+                oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
+                break;
+            case 3:
+                readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
+                iTxtFile = args[0];
+                oXMLFile = args[1];
+                oTXTFile = args[2];
+                break;
+            default:
+                readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
+                iTxtFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/DefaultContent.txt";
+                oXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XMLOutput.xml";
+                oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
         }
 
-        //Create XML reader object
-        XML parser = new XML();
+        //Create XMLparser reader object
+        XMLparser xmlParser = new XMLparser();
         List<Entry> entries = new ArrayList();
 
         //read the xml file
         try {
-            entries = parser.parseXmlFile(fileName);
+            entries = xmlParser.parseXmlFile(readXMLFile);
         } catch (SAXException ex) {
             Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         ScriptureFinder journal = new ScriptureFinder();
-        if (!entries.isEmpty())
-           journal.displayBooksAndTopics(entries);
+//        if (!entries.isEmpty())
+//           journal.displayBooksAndTopics(entries);
         
-/*Tests that the validity file is working by reading the file and displaying the results*/
-//            Parser parseEntry = new Parser();
-//            parseEntry.parseTopics("Is there a Faith topic in here?");
-//            parseEntry.parseScripture();
-            
-            
-/*Tests that the properties file is working by displaying the values in the properties file*/
-//            Properties props = new ReadValidFiles().getProps();
-//            String termsPath = props.getProperty("validTopicsPath");
-//            String scripturesPath = props.getProperty("validScripturesPath");
-//            
-//            BufferedReader in = new BufferedReader(new FileReader(termsPath));
-//            
-//            System.out.println(termsPath + "\n" + scripturesPath);
-            
+        Parser sParser = new Parser();
+        
+        sParser.parseScripture(iTxtFile);
+           
     }
     
     private void displayBooksAndTopics(List<Entry> entries) {
