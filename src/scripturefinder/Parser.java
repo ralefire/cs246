@@ -20,16 +20,28 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 
-    private String fileName = "C:\\money.txt";
+    //private String fileName = "C:\\money.txt";
 
     public void setFileName(String input)
     {
-        fileName = input;
+    //    fileName = input;
     }
 
-    public ArrayList<Scripture> parseScripture() throws IOException {
+    public List<Scripture> parseScripture(String fileName) throws IOException {
+        
+        List<Scripture> scriptureList = new ArrayList();
+        Properties props = new ReadValidFiles().getProps();
+        String scripturesPath = props.getProperty("validScripturesPath");
 
-        /*
+        BufferedReader configIn = new BufferedReader(new FileReader(scripturesPath));
+        String tempLine; //used to read the file line by line
+        String book = "";
+        String[] books;
+        while ((tempLine = configIn.readLine()) != null) {
+            books = tempLine.split(":");
+            book += books[0] + "|";
+        }
+        book = book.substring(0, book.length() - 1);
         System.out.println("Opening file: " + fileName);
 
         try {
@@ -40,31 +52,13 @@ public class Parser {
             String line; //used to read the file line by line
 
             while ((line = in.readLine()) != null) {
-
-                //contains the valid inputs for scripture books
-                String book = "((Nephi|Jacob|Enos|Jarom|Omni|Words of Mormon|Mosiah|"
-                                + "Alma|Helaman|Mormon|Ether|Moroni|Matthew|Mark|Luke|John|"
-                                + "Acts|Romans|Corinthians|Galatians|Ephesians|Philippians"
-                                + "|Colossians|Thessalonians|Timothy|Titus|Philemon|Hebrews|"
-                                + "James|Peter|Jude|Revelation|Genesis|Exodus|Leviticus|Number"
-                                + "|Deuteronomy|Joshua|Judges|Ruth|Samuel|Kings|Chronicles|"
-                                + "Ezra|Nehamiah|Esther|Job|Psalms|Proverbs|Ecclesiastes"
-                                + "|Song of Solomon|Isaiah|Jeremiah|Lamentations|Ezekiel|Daniel|"
-                                + "Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habukkuk|"
-                                + "Zephaniah|Haggai|Zechariah|Malachi|Moses|Abraham"
-                                + "|Joseph Smith History|D\\&C|Doctrine And Covenants)"; 
-
-                  //contains the valid inputs for scriptures that have more than one book
-                  //ex: 1 Nephi, 2 Nephi
-              String dupBooks = "(Nephi|Corinthians|Thessalonians|Timothy|"
-                        + "Peter|John|Samuel|Kings|Chronicles)";
-
+                
+              Scripture scripture = new Scripture();  
               //contains the regular expression to find scriptures in the form [book] [number]:[number]
-              //and [number] [book]
-              String regExBookNumNum = book + "( \\d{1,3}:\\d{1,3}))|(\\d " + dupBooks + " \\d{1,3}:\\d{1,3})";
-
+              String regExBookNumNum = "(" + book + ")( (\\d{1,3}):(\\d{1,3}))";
+              
               //contains the regular expression for scriptures of the form [book] chapter [number]
-              String regExBookChapterBook = book + " chapter( \\d))";
+              String regExBookChapterBook = "((" + book + ") chapter( \\d))";
 
               //create pattern objects from the regular expressions
               Pattern pNum = Pattern.compile(regExBookNumNum);
@@ -76,42 +70,46 @@ public class Parser {
 
               //display the patterns found
               while (mNum.find( )) {
-                 System.out.println("Found: " + mNum.group() );
+                //System.out.println("Found: " + mNum.group(1) + mNum.group(2) + mNum.group(3));
+                scripture.setBook(mNum.group(1));
+                int i = 0;
+                try {
+                    i = Integer.getInteger(mNum.group(2));
+                } catch (NullPointerException p) {
+                    i = 0;
+                }
+                scripture.setChapter(i);
+                try {
+                    i = Integer.getInteger(mNum.group(3));
+                } catch (NullPointerException p) {
+                    i = 0;
+                }
+                scripture.setVerses(i, i);
+                scriptureList.add(scripture);
+                scripture = new Scripture();
               }
 
-
+              
               //display the patterns found excluding the word "chapter"
               while (mChap.find( )) {
-                     System.out.println("Found: " + mChap.group(2) + mChap.group(3) );
+                    //System.out.println("Found: " + mChap.group(2) + mChap.group(3));
+                    int i = 0;
+                    scripture.setBook(mChap.group(2));
+                    try {
+                        i = Integer.getInteger(mChap.group(3));
+                    } catch (NullPointerException p) {
+                        i = 0;
+                    }
+                    scripture.setChapter(i);
+                    scriptureList.add(scripture);
+                    scripture = new Scripture();
                   }
-              
-             
-        
-        
             }
         } catch (IOException e) {
                 System.out.println("Error opening file: " + fileName);
-        }
-                */ 
+        }   
         
-            Properties props = new ReadValidFiles().getProps();
-            String scripturesPath = props.getProperty("validScripturesPath");
-            
-            BufferedReader in = new BufferedReader(new FileReader(scripturesPath));
-            String line; //used to read the file line by line
-            List<String> validScriptures = new ArrayList<>();
-
-            while ((line = in.readLine()) != null) {
-                validScriptures.add(line);
-            }
-
-            System.out.println("Checking for valid scriptures file...");
-            for (String script : validScriptures) {
-                System.out.println(script);
-            }
-     
-        
-        return null;
+        return scriptureList;
     }
 	
         public List<String> parseTopics(String input) throws IOException {
