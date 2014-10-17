@@ -5,13 +5,20 @@
  */
 package scripturefinder;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
  
 /**
@@ -26,6 +33,8 @@ public class ScriptureFinder {
         String iTxtFile;
         String oXMLFile;
         String oTXTFile;
+        List<Scripture> scriptures = new ArrayList();
+        List<String> topics = new ArrayList();
  
         switch (args.length) {
             case 1: 
@@ -58,21 +67,50 @@ public class ScriptureFinder {
         List<Entry> entries = new ArrayList();
 
         //read the xml file
-        try {
+        /*try {
             entries = xmlParser.parseXmlFile(readXMLFile);
         } catch (SAXException ex) {
             Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+         */
         ScriptureFinder journal = new ScriptureFinder();
 //        if (!entries.isEmpty())
 //           journal.displayBooksAndTopics(entries);
+       
+        Parser tempParser = new Parser();
         
-        Parser sParser = new Parser();
+        entries = tempParser.parseFile(iTxtFile); 
+        journal.exportTXTFile(oTXTFile, entries);
         
-        sParser.parseScripture(iTxtFile);
-           
+        try {
+            Document doc = xmlParser.buildXMLDocument(entries);
+            xmlParser.saveXML(doc, oXMLFile);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        
     }
+    
+    public void exportTXTFile(String fileName, List<Entry> entries) {
+        
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(fileName, "UTF-8");
+            for (Entry entry : entries) {
+                writer.println("-----");
+                writer.println(entry.getDate().toString());
+                writer.println(entry.getContent());
+                }
+            writer.println("-----");
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+            Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            writer.close();
+        }
+    }
+    
     
     private void displayBooksAndTopics(List<Entry> entries) {
     
