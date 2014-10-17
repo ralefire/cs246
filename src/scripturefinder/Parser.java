@@ -10,7 +10,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,26 +114,65 @@ public class Parser {
         return scriptureList;
     }
 	
-        public List<String> parseTopics(String input) throws IOException {
+        public List<String> parseTopics(String fileName) throws IOException {
             Properties props = new ReadValidFiles().getProps();
             String termsPath = props.getProperty("validTopicsPath");
             //String scripturesPath = props.getProperty("validScripturesPath");
             
             BufferedReader in = new BufferedReader(new FileReader(termsPath));
             String line; //used to read the file line by line
-            List<String> validTopics = new ArrayList<>();
-            
+            List<String> result = new ArrayList();
+            Map<String, String[]> tMap = new TreeMap();
+            String topics = "";
             while ((line = in.readLine()) != null) {
-                validTopics.add(line);
+                String[] lines = line.split(":");
+                String temp = lines[1].replaceAll(",", "|");
+                tMap.put(lines[0], lines[1].split(","));
+                topics += temp;
             }
             
-            System.out.println("Checking for valid topics file...");
-            for (String topic : validTopics) {
-                System.out.println(topic);
+            try {
+
+                //open the file from fileName
+                in = new BufferedReader(new FileReader(fileName));
+                line = "";
+                
+                while ((line = in.readLine()) != null) {
+                    Scripture scripture = new Scripture();  
+                    //contains the regular expression to find scriptures in the form [book] [number]:[number]
+                    String regExTopics = "(" + topics + ")";
+                    
+                    //create pattern objects from the regular expressions
+                    Pattern pTop = Pattern.compile(regExTopics);
+
+                    //create matcher object.
+                    Matcher mTop = pTop.matcher(line);
+
+                //display the patterns found
+                while (mTop.find()) {
+                    //System.out.println("Found: " + mNum.group(1) + mNum.group(2) + mNum.group(3));
+                    for (String key : tMap.keySet()) {
+                        String[] values = tMap.get(key);
+                        for (String v : values) {
+                            if (v.matches(mTop.group()))
+                                result.add(key);
+                        }
+                    }
+                  }
+                }
+            } catch (IOException e) {
+                    System.out.println("Error opening file: " + fileName);
+            }   
+         
+            for (String s : result) {
+                System.out.println(s);
             }
-            
-            return validTopics;
+            return result;
         }
     
+    public List<Entry> parseFile(String fileName) {
+        
+        return null;
+    }
 }
 
