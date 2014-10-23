@@ -1,6 +1,7 @@
 /*
  */
 package scripturefinder;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.Runnable;
@@ -8,9 +9,18 @@ import java.util.ArrayList;
 //import java.util.Date;
 import java.sql.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import jdk.internal.org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -20,9 +30,67 @@ import org.w3c.dom.NodeList;
  *
  * @author Admin
  */
-public class XML implements Runnable {
+public class XMLparser {
+       
+    public Document buildXMLDocument(List<Entry> entries) throws ParserConfigurationException {
+        
+        DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+        Document document = documentBuilder.newDocument();
 
-    public Boolean saveXML() {
+        // root element
+        Element root = document.createElement("journal");
+        document.appendChild(root);
+
+        // children element
+        for (Entry entry : entries) {
+            Element elemEntry = document.createElement("entry");
+            elemEntry.setAttribute("date", entry.getDate().toString());
+            
+                    
+            for (Scripture scripture : entry.getScriptures()) {
+                Element elemScripture = document.createElement("scripture");
+                elemScripture.setAttribute("book", scripture.getBook());
+                elemScripture.setAttribute("chapter", String.valueOf(scripture.getChapter()));
+                elemScripture.setAttribute("startverse", String.valueOf(scripture.getVerseStart()));
+                elemScripture.setAttribute("endverse", String.valueOf(scripture.getVerseEnd()));
+                elemEntry.appendChild(elemScripture);
+            }
+            
+            for (String topic : entry.getTopics()) {
+                Element elemTopic = document.createElement("topic");
+                elemTopic.setTextContent(topic);
+                elemEntry.appendChild(elemTopic);
+            }
+            
+            Element elemContent = document.createElement("content");
+            elemContent.setTextContent(entry.getContent());
+            elemEntry.appendChild(elemContent);
+            
+            root.appendChild(elemEntry);
+        }
+        
+        return document;
+    }
+    
+    public Boolean saveXML(Document doc, String fileName) {
+                
+        try {
+            // create the xml file
+            //transform the DOM Object to an XML File
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            DOMSource domSource = new DOMSource(doc);
+            StreamResult streamResult = new StreamResult(new File(fileName));
+            transformer.transform(domSource, streamResult);
+        } catch (TransformerConfigurationException ex) {
+            Logger.getLogger(XMLparser.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TransformerException ex) {
+            Logger.getLogger(XMLparser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
         return null;
     }
     
@@ -48,7 +116,7 @@ public class XML implements Runnable {
                 //Using factory get an instance of document builder
                 DocumentBuilder db = dbf.newDocumentBuilder();
                
-               //parse using builder to get DOM representation of the XML file
+               //parse using builder to get DOM representation of the XMLparser file
                //dom = db.parse(ClassLoader.getSystemResourceAsStream(fileName));
                 File file = new File(fileName); //open file
                 dom = db.parse(file);
@@ -74,8 +142,8 @@ public class XML implements Runnable {
 
             //Loop and build Entry objects
             for (int i = 0;  i < eList.getLength(); i++) {
-        List<String> topicList = new ArrayList();
-        List<Scripture> scriptureList = new ArrayList();
+                List<String> topicList = new ArrayList();
+                List<Scripture> scriptureList = new ArrayList();
                 Element entryElem = (Element)eList.item(i); //Get entry elements
                 Entry entry = new Entry(); //Create entry to add to entry list
                 NodeList topics = entryElem.getElementsByTagName("topic"); //get topic nodes
@@ -112,7 +180,6 @@ public class XML implements Runnable {
                         scripture.setVerses(startVerse, endVerse);
                         scriptureList.add(scripture);
                    }
-
                 }
                 
                 //set entry scripture list
@@ -142,11 +209,7 @@ public class XML implements Runnable {
         return entryList;
     }
     
-    @Override
-    public void run() {
-    
-    }
-    
+   
     public Boolean exportDocx() {
        return null;
     }

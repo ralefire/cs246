@@ -1,13 +1,11 @@
 /**
- * Milestone 3b
+ * Milestone Import Export
  * @author Cameron Lilly
  * Collaboration: Bryce Call helped explain what static meant in Java
  */
 package scripturefinder;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -26,9 +24,11 @@ import org.xml.sax.SAXException;
  * This program accepts a command line argument filename then parses out
  * and displays the scripture and topic references
  */
-public class ScriptureFinder {
+public class Journal {
 
-    public static void main(String[] args) throws IOException {
+    private List<Entry> entries = new ArrayList();
+    
+    public void notMainAnymore(String[] args) throws IOException {
         String readXMLFile;
         String iTxtFile;
         String oXMLFile;
@@ -36,6 +36,8 @@ public class ScriptureFinder {
         List<Scripture> scriptures = new ArrayList();
         List<String> topics = new ArrayList();
  
+        //Get Commandline arguments and set default arguments
+        
         switch (args.length) {
             case 1: 
                 readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
@@ -61,40 +63,10 @@ public class ScriptureFinder {
                 oXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XMLOutput.xml";
                 oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
         }
-
-        //Create XMLparser reader object
-        XMLparser xmlParser = new XMLparser();
-        List<Entry> entries = new ArrayList();
-
-        //read the xml file
-        /*try {
-            entries = xmlParser.parseXmlFile(readXMLFile);
-        } catch (SAXException ex) {
-            Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
-        ScriptureFinder journal = new ScriptureFinder();
-//        if (!entries.isEmpty())
-//           journal.displayBooksAndTopics(entries);
-       
-        Parser tempParser = new Parser();
-        
-        entries = tempParser.parseFile(iTxtFile); 
-        journal.exportTXTFile(oTXTFile, entries);
-        
-        try {
-            Document doc = xmlParser.buildXMLDocument(entries);
-            xmlParser.saveXML(doc, oXMLFile);
-        } catch (ParserConfigurationException ex) {
-            Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
-        
     }
     
-    public void exportTXTFile(String fileName, List<Entry> entries) {
-        
+    
+    public boolean exportTXTFile(String fileName) {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(fileName, "UTF-8");
@@ -105,15 +77,18 @@ public class ScriptureFinder {
                 }
             writer.println("-----");
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(ScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+            writer.close();
+            return false;
         } finally {
             writer.close();
         }
+        return true;
     }
     
     
-    private void displayBooksAndTopics(List<Entry> entries) {
-    
+    private void displayBooksAndTopics(List<Entry> input) {
+        entries = input;
         List<Scripture> sList = new ArrayList(); //list of scripture objects
         List<String> books = new ArrayList(); //list of books
         List<String> tList = new ArrayList(); //List of topics
@@ -193,6 +168,56 @@ public class ScriptureFinder {
                 System.out.println("\t" + e.getDate().toString());
             }
         }
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
+    }
+
+    public void addEntry(String content) {
+        try {
+            Parser parser = new Parser(); //create parser object
+            List<String> topics = parser.parseTopics(content);
+            List<Scripture> scriptures = parser.parseScripture(content);
+            Entry entry = new Entry(content, topics, scriptures);
+            entries.add(entry);
+        } catch (IOException ex) {
+            Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void loadFromFile(String fileName) {
+        Parser tempParser = new Parser(); //create parser object
+        entries = tempParser.parseFile(fileName); //parse input file and collect entries
+    }
+    
+    public boolean exportXMLFile(String fileName) {
+        //export entries into output xml file
+        if (entries == null) {
+            return false;
+        }
+        XMLparser xmlParser = new XMLparser();
+        try {
+            Document doc = xmlParser.buildXMLDocument(entries);
+            xmlParser.saveXML(doc, fileName);
+        } catch (ParserConfigurationException ex) {
+            Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean loadFromXMLFile(String fileName) {
+        //Create XMLparser reader object
+        XMLparser xmlParser = new XMLparser();
+        //read the xml file
+        try {
+            entries = xmlParser.parseXmlFile(fileName);
+        } catch (SAXException ex) {
+            Logger.getLogger(Journal.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
     }
     
 }

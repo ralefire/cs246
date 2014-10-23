@@ -59,10 +59,14 @@ public class Scripture {
     }
 
     public void display() {
-        System.out.print("\t" + book + " " + chapter + ":" + verseStart);
+        System.out.print("\t" + book + " " + chapter);
+        
+        if (verseStart != 0) {
+            System.out.print(":" + verseStart);
+        }
         
         if (verseStart != verseEnd) {
-        System.out.print("-" + verseEnd);
+            System.out.print("-" + verseEnd);
         }
         
         System.out.println();

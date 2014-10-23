@@ -28,6 +28,14 @@ public class Entry {
         scripture = null;
     }
     
+    public Entry(String iContent, List<String> iTopics, List<Scripture> iScriptures) {
+        content = iContent;
+        date = new Date();
+        topics = iTopics;
+        title = "";
+        scripture = iScriptures;
+    }
+    
     public Entry() {
         content = "";
         date = null;

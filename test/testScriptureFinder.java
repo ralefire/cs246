@@ -12,9 +12,9 @@ import org.testng.annotations.Test;
 import scripturefinder.Entry;
 import scripturefinder.Parser;
 import scripturefinder.Scripture;
-import scripturefinder.ScriptureFinder;
+import scripturefinder.Journal;
 import scripturefinder.UserInterface;
-import scripturefinder.XML;
+import scripturefinder.XMLparser;
 import scripturefinder.Report;
 
 /**
@@ -113,7 +113,7 @@ public class testScriptureFinder {
     @Test
     public void parserValidFileTest() {
         Parser e = new Parser();
-        e.setFileName("C:validFile.txt"); //valid file includes scripture
+    //    e.setFileName("C:validFile.txt"); //valid file includes scripture
     //    ArrayList<Scripture> s = e.parseScripture("I had an amazing thought"
       //          + " from Abraham 1:2");
     
@@ -122,14 +122,14 @@ public class testScriptureFinder {
     
     @Test
     public void xmlFileReadTest() {
-        XML reader = new XML();
+        XMLparser reader = new XMLparser();
         boolean success = reader.importXML("C:myDoc");
         Assert.assertEquals(success, true);
     }
     
     @Test
     public void xmlFileCreateTest() {
-        XML reader = new XML();
+        XMLparser reader = new XMLparser();
         boolean success = reader.exportDocx();
         Assert.assertEquals(success, true);
     }

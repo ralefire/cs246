@@ -11,7 +11,7 @@ Savior:Savior,Jesus,Christ,Son of God,Bread of Life,Jehovah,Advocate,Lamb of God
 Revelation:revelation,reveal,prophesy
 Baptism:baptism,baptize,baptized,born of water
 Covenants:covenant,covenants,promise
-Holy Ghost:holy ghost;holy spirit;the spirit;comforter
+Holy Ghost:holy ghost,holy spirit,the spirit,comforter
 Pride:pride,proud,hardhearted,stiffnecked
 Humility:humility,humble
 Happiness:happy,happiness,joy,rejoice
