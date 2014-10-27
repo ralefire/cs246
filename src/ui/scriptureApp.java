@@ -12,10 +12,12 @@ import java.io.PrintStream;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -37,6 +39,7 @@ public class scriptureApp extends Application {
     private TextArea txtAddEntry = new TextArea();
     private VBox leftMenu = new VBox();
     private VBox centerMenu = new VBox();
+    private VBox bottomMenu = new VBox();
     private VBox rightMenu = new VBox();
     
     @Override
@@ -46,21 +49,36 @@ public class scriptureApp extends Application {
         txtTerminal = new TextArea();
         leftMenu = new VBox();
         centerMenu = new VBox();
+        bottomMenu = new VBox();
         rightMenu = new VBox();
         root.setLeft(leftMenu);
         root.setCenter(centerMenu);
-        root.setBottom(txtTerminal);
+        root.setBottom(bottomMenu);
         root.setRight(rightMenu);
+
         
         
-        /* txtTerminal/Bottom Menu */
+        /* Bottom Menu */
+        
+        // Terminal Label
+        // Journal entry label
+        Label labelTerminal = new Label("Terminal");
+        bottomMenu.getChildren().add(labelTerminal);
+        
+        // Text Terminal
         txtTerminal.setEditable(false);
+        txtTerminal.setPrefRowCount(5);
+        bottomMenu.getChildren().add(txtTerminal);
         redirectSystemStreams();
         
         /* LeftMenu Items */
+        leftMenu.setStyle("-fx-background-color: #666666" + "");
+        leftMenu.setPadding(new Insets(0, 10, 0, 0));
+        leftMenu.setMinWidth(100);
         
         //load txt file
         Button btnLoadJournal = new Button();
+        btnLoadJournal.setMinWidth(leftMenu.getMinWidth());
         btnLoadJournal.setText("Load Journal");
         btnLoadJournal.setOnAction(new EventHandler<ActionEvent>() {
             
@@ -87,6 +105,7 @@ public class scriptureApp extends Application {
         
         //load xml file
         Button btnLoadXML = new Button();
+        btnLoadXML.setMinWidth(leftMenu.getMinWidth());
         btnLoadXML.setText("Load XML File");
         btnLoadXML.setOnAction(new EventHandler<ActionEvent>() {
             
@@ -118,6 +137,7 @@ public class scriptureApp extends Application {
         
         // save/export xml file
         Button btnSaveAsXML = new Button();
+        btnSaveAsXML.setMinWidth(leftMenu.getMinWidth());
         btnSaveAsXML.setText("SaveAs XML");
         btnSaveAsXML.setOnAction(new EventHandler<ActionEvent>() {
             
@@ -141,6 +161,7 @@ public class scriptureApp extends Application {
         
         // save/export txt file
         Button btnSaveAsTXT = new Button();
+        btnSaveAsTXT.setMinWidth(leftMenu.getMinWidth());
         btnSaveAsTXT.setText("SaveAs TXT");
         btnSaveAsTXT.setOnAction(new EventHandler<ActionEvent>() {
             
@@ -171,7 +192,7 @@ public class scriptureApp extends Application {
         // Journal Entry Content area
         txtContent = new TextArea();
         txtContent.setPrefColumnCount(40);
-        txtContent.setPrefRowCount(10);
+        txtContent.setPrefRowCount(25);
         centerMenu.getChildren().add(txtContent);
         
         // Create new Entry Label
@@ -204,6 +225,53 @@ public class scriptureApp extends Application {
             }
         });
         centerMenu.getChildren().add(btnNewEntry);
+        
+        /* Right Menu */
+        
+        // view by... ...Label
+        Label labelViewBy= new Label("View Entries By...");
+        rightMenu.getChildren().add(labelViewBy);
+        
+        // Sort by Date Button
+        Button btnSortDate = new Button();
+        btnSortDate.setText("Date");
+        btnSortDate.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Sorting by date.");
+                //TODO add sort by date function
+            }
+        });
+        rightMenu.getChildren().add(btnSortDate);
+        
+        // Sort by Scriptures Button
+        Button btnSortScriptures = new Button();
+        btnSortScriptures.setText("Scripture");
+        btnSortScriptures.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Sorting by scriptures.");
+                //TODO add sort by scriptures function
+            }
+        });
+        rightMenu.getChildren().add(btnSortScriptures);
+        
+        // Sort by Topic Button
+        Button btnSortTopic = new Button();
+        btnSortTopic.setText("Topic");
+        btnSortTopic.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Sorting by Topic.");
+                //TODO add sort by scriptures function
+            }
+        });
+        rightMenu.getChildren().add(btnSortTopic);
+        
+        
         
         
         /* Scene Section */
