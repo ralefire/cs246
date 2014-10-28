@@ -23,6 +23,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import scripturefinder.Entry;
 import scripturefinder.Journal;
+import scripturefinder.Scripture;
 
 /**
  *
@@ -70,28 +71,24 @@ public class scriptureApp extends Application {
         redirectSystemStreams();
         
         /* LeftMenu Items */
-        leftMenu.setStyle("-fx-background-color: #666666" + "");        
+        leftMenu.setStyle("-fx-background-color: #666666");
         leftMenu.setMinWidth(100);
         
         //load txt file
         Button btnLoadJournal = new Button();
         btnLoadJournal.setMinWidth(leftMenu.getMinWidth());
         btnLoadJournal.setText("Load Journal");
-        btnLoadJournal.setOnAction(new EventHandler<ActionEvent>() {
+        btnLoadJournal.setOnAction((ActionEvent event) -> {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showOpenDialog(primaryStage);
             
-            @Override
-            public void handle(ActionEvent event) {
-                FileChooser chooser = new FileChooser();
-                File file = chooser.showOpenDialog(primaryStage);              
+            if (file != null) {
+                String fileName = file.getPath();
+                System.out.println("Loading File...");
+                journal.setFilePath(fileName);
+                Thread loadTXTFile = new Thread(journal);
+                loadTXTFile.start();
                 
-                if (file != null) {
-                        String fileName = file.getPath();
-                        System.out.println("Loading File...");
-                        journal.setFilePath(fileName);
-                        Thread loadTXTFile = new Thread(journal);
-                        loadTXTFile.start();
-                        
-                }
             }
         });
         leftMenu.getChildren().add(btnLoadJournal);
@@ -118,7 +115,7 @@ public class scriptureApp extends Application {
 
                     String text = "";
                     for (Entry entry : journal.getEntries()) {
-                        text += entry.getDate() + "\n";
+                        text += entry.getDateAsString() + "\n";
                         text += entry.getContent() + "\n\n";
                     }
                     
@@ -212,7 +209,7 @@ public class scriptureApp extends Application {
                 journal.addEntry(content);
                 String text = "";
                 for (Entry entry : journal.getEntries()) {
-                    text += entry.getDate() + "\n";
+                    text += entry.getDateAsString() + "\n";
                     text += entry.getContent() + "\n\n";
                 }
                 txtContent.setText(text);
@@ -235,7 +232,12 @@ public class scriptureApp extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Sorting by date.");
-                //TODO add sort by date function
+                String text = "";
+                for (Entry entry : journal.getEntries()) {
+                    text += entry.getDateAsString() + "\n";
+                    text += entry.getContent() + "\n\n";
+                }
+                txtContent.setText(text);
             }
         });
         rightMenu.getChildren().add(btnSortDate);
@@ -248,7 +250,13 @@ public class scriptureApp extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Sorting by scriptures.");
-                //TODO add sort by scriptures function
+                txtContent.setText(journal.sortByScriptures());
+                
+//                for (Entry e : journal.getEntries()) {
+//                    for (Scripture s : e.getScriptures()) {
+//                        System.out.println(s.getAsString());
+//                    }
+//                }
             }
         });
         rightMenu.getChildren().add(btnSortScriptures);
@@ -261,7 +269,7 @@ public class scriptureApp extends Application {
             @Override
             public void handle(ActionEvent event) {
                 System.out.println("Sorting by Topic.");
-                //TODO add sort by scriptures function
+                txtContent.setText(journal.sortByTopics());
             }
         });
         rightMenu.getChildren().add(btnSortTopic);
