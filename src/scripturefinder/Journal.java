@@ -124,6 +124,10 @@ public class Journal implements Runnable {
             }
         }
 
+        
+        
+        
+        
         // display books and matching entry dates without duplicates
         System.out.println("Scripture References:");
         for(String key : sMap.keySet()) {
