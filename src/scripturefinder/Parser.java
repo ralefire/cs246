@@ -26,13 +26,6 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 
-    //private String fileName = "C:\\money.txt";
-
-//    public void setFileName(String input)
-//    {
-//        fileName = input;
-//    }
-
     public List<Scripture> parseScripture(String input) throws IOException {
         
         List<Scripture> scriptureList = new ArrayList();
@@ -169,31 +162,33 @@ public class Parser {
         String content = "";
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
-            String line; //used to read the file line by line
+            String line = ""; //used to read the file line by line
         
             Boolean startEntry = false; //Used to know when a new entry should be added
-            while ((line = in.readLine()) != null) {
-                if (line.equals("-----")) {
-                        if (startEntry == false) {
-                            startEntry = true;
-                        } else {
-                            startEntry = false;
-                            entry.setContent(content);
-                            entry.setScriptures(parseScripture(content));
-                            entry.setTopics(parseTopics(content));
-                            result.add(entry);
-                            entry = new Entry();
-                            content = "";
-                        }
-                    line = in.readLine();
-                    if (line != null) {
+            while (true) { 
+                if (line != null && line.equals("-----")) {
+                    if ((line = in.readLine()) != null) {
                         date = date.valueOf(line);
                         entry.setDate(date);
-                    } else {
-                       break;
+                        content = "";
+                        startEntry = true;
                     }
+
+                    while ((line = in.readLine()) != null && !line.equals("-----"))
+                        content += line;
+                                                                       
+                    if (line != null) {
+                        entry.setContent(content);
+                        entry.setScriptures(parseScripture(content));
+                        entry.setTopics(parseTopics(content));
+                        result.add(entry);
+                        entry = new Entry();
+                        content = "";
+                        startEntry = false;
+                    } 
+                } else if ((line = in.readLine()) != null) {
                 } else {
-                    content += line;
+                    break;
                 }
             }
             
