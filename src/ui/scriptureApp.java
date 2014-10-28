@@ -17,13 +17,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javax.swing.SwingUtilities;
 import scripturefinder.Entry;
 import scripturefinder.Journal;
 
@@ -33,7 +30,6 @@ import scripturefinder.Journal;
  */
 public class scriptureApp extends Application {
     
-    private Journal journal;
     private TextArea txtContent = new TextArea();
     private TextArea txtTerminal = new TextArea();
     private TextArea txtAddEntry = new TextArea();
@@ -44,7 +40,7 @@ public class scriptureApp extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        journal = new Journal();
+        
         BorderPane root = new BorderPane();
         txtTerminal = new TextArea();
         leftMenu = new VBox();
@@ -55,8 +51,10 @@ public class scriptureApp extends Application {
         root.setCenter(centerMenu);
         root.setBottom(bottomMenu);
         root.setRight(rightMenu);
-
-        
+        TextAreaUpdater updater = new TextAreaUpdater();
+        updater.setTextArea(txtContent);
+        updater.setTerminal(txtTerminal);
+        Journal journal = new Journal(updater);
         
         /* Bottom Menu */
         
@@ -72,8 +70,7 @@ public class scriptureApp extends Application {
         redirectSystemStreams();
         
         /* LeftMenu Items */
-        leftMenu.setStyle("-fx-background-color: #666666" + "");
-        leftMenu.setPadding(new Insets(0, 10, 0, 0));
+        leftMenu.setStyle("-fx-background-color: #666666" + "");        
         leftMenu.setMinWidth(100);
         
         //load txt file
@@ -88,16 +85,12 @@ public class scriptureApp extends Application {
                 File file = chooser.showOpenDialog(primaryStage);              
                 
                 if (file != null) {
-                    String fileName = file.getPath();
-                    journal.loadFromFile(fileName);
-
-                    String text = "";
-                    for (Entry entry : journal.getEntries()) {
-                        text += entry.getDate() + "\n";
-                        text += entry.getContent() + "\n\n";
-                    }
-                    
-                    txtContent.setText(text);
+                        String fileName = file.getPath();
+                        System.out.println("Loading File...");
+                        journal.setFilePath(fileName);
+                        Thread loadTXTFile = new Thread(journal);
+                        loadTXTFile.start();
+                        
                 }
             }
         });
@@ -184,13 +177,15 @@ public class scriptureApp extends Application {
         leftMenu.getChildren().add(btnSaveAsTXT);
         
         /* Center Content */
-                
+        
+        // centerMenu Styles
+        centerMenu.setPadding(new Insets(0, 0, 0, 10));
+        
         // Journal entry label
         Label labelJournalEntries = new Label("Journal Entries");
         centerMenu.getChildren().add(labelJournalEntries);
         
         // Journal Entry Content area
-        txtContent = new TextArea();
         txtContent.setPrefColumnCount(40);
         txtContent.setPrefRowCount(25);
         centerMenu.getChildren().add(txtContent);

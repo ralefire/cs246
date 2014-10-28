@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import ui.Updater;
 
 /**
  * Parser class uses regular expressions to search for scripture references
@@ -26,6 +27,8 @@ import java.util.regex.Pattern;
  */
 public class Parser {
 
+    private String filePath = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/DefaultContent.txt";
+    
     public List<Scripture> parseScripture(String input) throws IOException {
         
         List<Scripture> scriptureList = new ArrayList();
@@ -154,14 +157,14 @@ public class Parser {
 //        }
         return result;
     }
-    
-    public List<Entry> parseFile(String fileName) {
+
+    public List<Entry> parseFile() {
         List<Entry> result = new ArrayList();
         Entry entry = new Entry();
         Date date = new Date(1234);
         String content = "";
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            BufferedReader in = new BufferedReader(new FileReader(filePath));
             String line = ""; //used to read the file line by line
         
             Boolean startEntry = false; //Used to know when a new entry should be added
@@ -185,6 +188,7 @@ public class Parser {
                         entry = new Entry();
                         content = "";
                         startEntry = false;
+                        Thread.sleep(500);
                     } 
                 } else if ((line = in.readLine()) != null) {
                 } else {
@@ -201,12 +205,77 @@ public class Parser {
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Error opening file: " + fileName);
-        } catch (IOException ex) {
+            System.out.println("Error opening file: " + filePath);
+        } catch (IOException | InterruptedException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
         }      
         
         return result;
+    }
+
+    public List<Entry> parseFile(Updater updater) {
+        List<Entry> result = new ArrayList();
+        Entry entry = new Entry();
+        Date date = new Date(1234);
+        String content = "";
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(filePath));
+            String line = ""; //used to read the file line by line
+        
+            Boolean startEntry = false; //Used to know when a new entry should be added
+            while (true) { 
+                if (line != null && line.equals("-----")) {
+                    if ((line = in.readLine()) != null) {
+                        date = date.valueOf(line);
+                        entry.setDate(date);
+                        content = "";
+                        startEntry = true;
+                    }
+
+                    while ((line = in.readLine()) != null && !line.equals("-----"))
+                        content += line;
+                                                                       
+                    if (line != null) {
+                        entry.setContent(content);
+                        entry.setScriptures(parseScripture(content));
+                        entry.setTopics(parseTopics(content));
+                        result.add(entry);
+                        Thread.sleep(500);
+                        updater.update(entry);
+                        entry = new Entry();
+                        content = "";
+                        startEntry = false;
+                    } 
+                } else if ((line = in.readLine()) != null) {
+                } else {
+                    break;
+                }
+            }
+            
+            //Add the last entry if needed
+            if (startEntry == true) {
+                entry.setContent(content);
+                entry.setScriptures(parseScripture(content));
+                entry.setTopics(parseTopics(content));
+                result.add(entry);            
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Error opening file: " + filePath);
+        } catch (IOException | InterruptedException ex) {
+            Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
+        }      
+        
+        return result;
+    }
+    
+    
+    void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+    
+    String getFilePath() {
+        return filePath;
     }
 }
 

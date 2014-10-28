@@ -18,53 +18,30 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import ui.Updater;
  
 /**
  * Main Class.
  * This program accepts a command line argument filename then parses out
  * and displays the scripture and topic references
  */
-public class Journal {
+public class Journal implements Runnable {
 
-    private List<Entry> entries = new ArrayList();
+    private List<Entry> entries = new ArrayList();   
+    String filePath = "";
+    private Updater updater;
     
-    public void notMainAnymore(String[] args) throws IOException {
-        String readXMLFile;
-        String iTxtFile;
-        String oXMLFile;
-        String oTXTFile;
-        List<Scripture> scriptures = new ArrayList();
-        List<String> topics = new ArrayList();
- 
-        //Get Commandline arguments and set default arguments
-        
-        switch (args.length) {
-            case 1: 
-                readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
-                iTxtFile = args[0];
-                oXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XMLOutput.xml";
-                oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
-                break;
-            case 2:
-                 readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
-                iTxtFile = args[0];
-                oXMLFile = args[1];
-                oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
-                break;
-            case 3:
-                readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
-                iTxtFile = args[0];
-                oXMLFile = args[1];
-                oTXTFile = args[2];
-                break;
-            default:
-                readXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XML.xml";
-                iTxtFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/DefaultContent.txt";
-                oXMLFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/XMLOutput.xml";
-                oTXTFile = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/TXTOutput.txt";
-        }
+    public Journal(Updater updater) {
+        this.updater = updater;
     }
     
+    public Updater getUpdater() {
+        return updater;
+    }
+    
+    public void setUpdater(Updater updater) {
+        this.updater = updater;
+    }
     
     public boolean exportTXTFile(String fileName) {
         PrintWriter writer = null;
@@ -186,9 +163,11 @@ public class Journal {
         }
     }
     
-    public void loadFromFile(String fileName) {
+    public void loadFromFile() {
         Parser tempParser = new Parser(); //create parser object
-        entries = tempParser.parseFile(fileName); //parse input file and collect entries
+        tempParser.setFilePath(filePath);
+        entries = tempParser.parseFile(updater); //parse input file and collect entries
+        
     }
     
     public boolean exportXMLFile(String fileName) {
@@ -219,5 +198,15 @@ public class Journal {
         }
         return true;
     }
+
+    @Override
+    public void run() {
+        loadFromFile();
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+    
     
 }
