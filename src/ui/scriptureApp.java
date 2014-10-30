@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * ScriptureFinder Application used to record and search scriptures in a journal
  */
 package ui;
 
@@ -24,8 +22,8 @@ import scripturefinder.Entry;
 import scripturefinder.Journal;
 
 /**
- *
- * @author Admin
+ * This is the GUI for the scripture finder application
+ * @author Cameron Lilly
  */
 public class scriptureApp extends Application {
     
@@ -37,6 +35,10 @@ public class scriptureApp extends Application {
     private VBox bottomMenu = new VBox();
     private VBox rightMenu = new VBox();
     
+    /**
+     * Load all graphical pieces and set up event listeners
+     * @param primaryStage 
+     */
     @Override
     public void start(Stage primaryStage) {
         
@@ -230,12 +232,6 @@ public class scriptureApp extends Application {
         btnSortScriptures.setOnAction((ActionEvent event) -> {
             System.out.println("Sorting by scripture");
             txtContent.setText(journal.sortByScriptures());
-            
-//                for (Entry e : journal.getEntries()) {
-//                    for (Scripture s : e.getScriptures()) {
-//                        System.out.println(s.getAsString());
-//                    }
-//                }
         });
         rightMenu.getChildren().add(btnSortScriptures);
         
@@ -259,16 +255,25 @@ public class scriptureApp extends Application {
     }
 
     /**
+     * main method
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         launch(args);
     }
     
+    /**
+     * Takes input text string and appends it to the txtTerminal
+     * @param text 
+     */
     private void updateTextArea(final String text) {
-            txtTerminal.appendText(text);
+        txtTerminal.appendText(text);
     }
- 
+    
+    /**
+     * Redirects System streams to update the txtTerminal instead of the console
+     * so that it is visible to the user
+     */
     private void redirectSystemStreams() {
         OutputStream out = new OutputStream() {
         @Override
@@ -289,5 +294,4 @@ public class scriptureApp extends Application {
 
       System.setOut(new PrintStream(out, true));
     }
-    
 }
