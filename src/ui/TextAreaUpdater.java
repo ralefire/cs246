@@ -16,18 +16,25 @@ import scripturefinder.Entry;
 public class TextAreaUpdater implements Updater{
   private TextArea text;
   private TextArea terminal;
-  private int count = 0;
-    
+  private int countEntries = 0;
+  private int countScriptures = 0;
+  private int countTopics = 0;
+
   @Override
     public void update(Entry message) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                text.appendText(message.getDate() + "\n");
-                text.appendText(message.getContent() + "\n\n");
-                count++;
-                if (terminal != null)
-                   terminal.appendText("\t" + count + " entries loaded\n");
+        Platform.runLater(() -> {
+            text.appendText(message.getDateAsString() + "\n");
+            text.appendText(message.getContent() + "\n\n");
+            countEntries++;
+            
+            countScriptures += message.getScriptures().size();
+            countTopics += message.getTopics().size();
+            
+            if (terminal != null) {
+                terminal.setText("Loading File...\n"
+                        + "\t" + countEntries + " entries loaded\n"
+                        + "\t" + countScriptures + " scriptures loaded\n"
+                        + "\t" + countTopics + " topics loaded\n");
             }
         });
     }
@@ -40,7 +47,34 @@ public class TextAreaUpdater implements Updater{
         this.terminal = terminal;
     }
     
-    public void countReset() {
-        count = 0;
+    public void countEntriesReset() {
+        countEntries = 0;
+    }
+    
+    public void countTopicsReset() {
+        countTopics = 0;
+    }
+    
+    public void countScripturesReset() {
+        countScriptures = 0;
+    }
+    
+  @Override
+    public void resetCounts() {
+        countEntries = 0;
+        countTopics = 0;
+        countScriptures = 0;
+    }
+    
+    public void clear() {
+        text.clear();
+    }
+    
+  @Override
+    public void displayDone() {
+        Platform.runLater(() -> {
+            terminal.appendText("Done.\n");
+        });
+        
     }
 }

@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package scripturefinder;
 
 import java.util.Date;
 
 /**
- *
- * @author Admin
+ * Stub for report class for future implementation
+ * @author Cameron Lilly
  */
 public class Report {
     

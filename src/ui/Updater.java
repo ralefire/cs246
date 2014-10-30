@@ -13,4 +13,6 @@ import scripturefinder.Entry;
  */
 public interface Updater {
     public void update(Entry input);
+    public void resetCounts();
+    public void displayDone();
 }

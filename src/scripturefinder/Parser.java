@@ -1,10 +1,5 @@
-/**
- * Milestone 1 - basic File I/O (1_FileIO)
- * @author Cameron Lilly
- * Collaboration: Bryce Call helped explain what static meant in Java
- */
-
 package scripturefinder;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -23,14 +18,21 @@ import ui.Updater;
 
 /**
  * Parser class uses regular expressions to search for scripture references
- * from a file, then displays the results found to the user
+ * and topics from a filePath
  */
 public class Parser {
 
-    private String filePath = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/DefaultContent.txt";
+    // path to file to be parsed 
+    private String filePath = "C:/Users/Admin/Documents/NetBeansProjects/"
+            + "ScriptureFinder/src/scripturefinder/DefaultContent.txt";
     
+    /**
+     * Parses the input string for scriptures and returns them in a list
+     * @param input
+     * @return list of scriptures
+     * @throws IOException 
+     */
     public List<Scripture> parseScripture(String input) throws IOException {
-        
         List<Scripture> scriptureList = new ArrayList();
         Properties props = new ReadValidFiles().getProps();
         String scripturesPath = props.getProperty("validScripturesPath");
@@ -43,75 +45,73 @@ public class Parser {
             books = tempLine.split(":");
             book += books[0] + "|";
         }
-        book = book.substring(0, book.length() - 1);
-        //System.out.println("Opening file: " + fileName);
-
-            //open the file from fileName
-            
-            String line = input; //used to read the file line by line
-                                     
-              Scripture scripture = new Scripture();  
-              //contains the regular expression to find scriptures in the form [book] [number]:[number]
-              String regExBookNumNum = "(" + book + ")( (\\d{1,3}):(\\d{1,3}))";
-              
-              //contains the regular expression for scriptures of the form [book] chapter [number]
-              String regExBookChapterBook = "((" + book + ") chapter( \\d))";
-
-              //create pattern objects from the regular expressions
-              Pattern pNum = Pattern.compile(regExBookNumNum);
-              Pattern pChap = Pattern.compile(regExBookChapterBook);
-
-              //create matcher object.
-              Matcher mNum = pNum.matcher(line);
-              Matcher mChap = pChap.matcher(line);
-
-              //display the patterns found
-              while (mNum.find( )) {
-                //System.out.println("Found: " + mNum.group(1) + mNum.group(2) + mNum.group(3));
-                scripture.setBook(mNum.group(1));
-                int i = 0;
-                try {
-                    i = Integer.parseInt(mNum.group(3));
-                } catch (NullPointerException p) {
-                    i = 0;
-                }
-                scripture.setChapter(i);
-                try {
-                    i = Integer.parseInt(mNum.group(4).trim());
-                } catch (NullPointerException p) {
-                    i = 0;
-                }
-                scripture.setVerses(i, i);
-                scriptureList.add(scripture);
-                scripture = new Scripture();
-              }
-
-              
-              //display the patterns found excluding the word "chapter"
-              while (mChap.find( )) {
-                    //System.out.println("Found: " + mChap.group(2) + mChap.group(3));
-                    int i = 0;
-                    scripture.setBook(mChap.group(2));
-                    try {
-                        //System.out.println(mChap.group(3));
-                        i = Integer.parseInt(mChap.group(3).trim());
-                    } catch (NullPointerException p) {
-                        i = 0;
-                    } catch (NumberFormatException ex) {
-                        i = 0;
-                    }
-                    scripture.setChapter(i);
-                    scriptureList.add(scripture);
-                    scripture = new Scripture();
-                  }  
         
-//        for (Scripture s : scriptureList) {
-//            s.display();
-//        }      
+        book = book.substring(0, book.length() - 1);
+                                     
+        Scripture scripture = new Scripture();  
+        //contains the regular expression to find scriptures in the form [book] [number]:[number]
+        String regExBookNumNum = "(" + book + ")( (\\d{1,3}):(\\d{1,3}))";
+
+        //contains the regular expression for scriptures of the form [book] chapter [number]
+        String regExBookChapterBook = "((" + book + ") chapter( \\d))";
+
+        //create pattern objects from the regular expressions
+        Pattern pNum = Pattern.compile(regExBookNumNum);
+        Pattern pChap = Pattern.compile(regExBookChapterBook);
+
+        //create matcher object.
+        Matcher mNum = pNum.matcher(input);
+        Matcher mChap = pChap.matcher(input);
+
+        //display the patterns found
+        while (mNum.find( )) {
+            //System.out.println("Found: " + mNum.group(1) + mNum.group(2) + mNum.group(3));
+            scripture.setBook(mNum.group(1));
+            int i = 0;
+            try {
+                i = Integer.parseInt(mNum.group(3));
+            } catch (NullPointerException p) {
+                i = 0;
+            }
+
+            scripture.setChapter(i);
+            try {
+                i = Integer.parseInt(mNum.group(4).trim());
+            } catch (NullPointerException p) {
+                i = 0;
+            }
+
+            scripture.setVerses(i, i);
+            scriptureList.add(scripture);
+            scripture = new Scripture();
+        }
+
+        //display the patterns found excluding the word "chapter"
+        while (mChap.find( )) {
+            //System.out.println("Found: " + mChap.group(2) + mChap.group(3));
+            int i = 0;
+            scripture.setBook(mChap.group(2));
+            try {
+                //System.out.println(mChap.group(3));
+                i = Integer.parseInt(mChap.group(3).trim());
+            } catch (NullPointerException | NumberFormatException p) {
+                i = 0;
+            }
+            scripture.setChapter(i);
+            scriptureList.add(scripture);
+            scripture = new Scripture();
+        }     
               
         return scriptureList;
     }
-	
+
+    /**
+     * parses a file from filePath to collect a list of topic strings
+     * from the config file valid topics
+     * @param input
+     * @return list of topic strings
+     * @throws IOException 
+     */
     public List<String> parseTopics(String input) throws IOException {
         // read config.properties to obtain valid topics
         Properties props = new ReadValidFiles().getProps();
@@ -142,22 +142,21 @@ public class Parser {
 
             //collect the patterns found
             while (mTop.find()) {
-                //System.out.println("Found: " + mNum.group(1) + mNum.group(2) + mNum.group(3));
-                for (String key : tMap.keySet()) {
+                tMap.keySet().stream().forEach((key) -> {
                     String[] values = tMap.get(key);
                     for (String v : values) {
                         if (v.matches(mTop.group()))
                             result.add(key);
                     }
-                }
+                });
               }  
-
-//        for (String s : result) {
-//            System.out.println(s);
-//        }
         return result;
     }
 
+    /**
+     * This parses a file from filePath to generate a list of entries 
+     * @return list of entries
+     */
     public List<Entry> parseFile() {
         List<Entry> result = new ArrayList();
         Entry entry = new Entry();
@@ -167,7 +166,7 @@ public class Parser {
             BufferedReader in = new BufferedReader(new FileReader(filePath));
             String line = ""; //used to read the file line by line
         
-            Boolean startEntry = false; //Used to know when a new entry should be added
+            Boolean startEntry = false; //Used to know when a new entry is found and if a last entry is needed
             while (true) { 
                 if (line != null && line.equals("-----")) {
                     if ((line = in.readLine()) != null) {
@@ -185,10 +184,10 @@ public class Parser {
                         entry.setScriptures(parseScripture(content));
                         entry.setTopics(parseTopics(content));
                         result.add(entry);
+                        Thread.sleep(500);
                         entry = new Entry();
                         content = "";
                         startEntry = false;
-                        Thread.sleep(500);
                     } 
                 } else if ((line = in.readLine()) != null) {
                 } else {
@@ -201,7 +200,7 @@ public class Parser {
                 entry.setContent(content);
                 entry.setScriptures(parseScripture(content));
                 entry.setTopics(parseTopics(content));
-                result.add(entry);            
+                result.add(entry);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
@@ -213,7 +212,14 @@ public class Parser {
         return result;
     }
 
+    /**
+     * This parses a file from filePath to generate a list of entries
+     * The list of entries are displayed to the user through the updater class
+     * @param updater
+     * @return a list of entries with their corresponding scriptures, topics, dates, etc.
+     */
     public List<Entry> parseFile(Updater updater) {
+        updater.resetCounts();
         List<Entry> result = new ArrayList();
         Entry entry = new Entry();
         Date date = new Date(1234);
@@ -222,11 +228,11 @@ public class Parser {
             BufferedReader in = new BufferedReader(new FileReader(filePath));
             String line = ""; //used to read the file line by line
         
-            Boolean startEntry = false; //Used to know when a new entry should be added
+            Boolean startEntry = false; //Used to know if a new entry is found and a last entry is needed
             while (true) { 
                 if (line != null && line.equals("-----")) {
                     if ((line = in.readLine()) != null) {
-                        date = date.valueOf(line);
+                        date = Date.valueOf(line);
                         entry.setDate(date);
                         content = "";
                         startEntry = true;
@@ -257,7 +263,8 @@ public class Parser {
                 entry.setContent(content);
                 entry.setScriptures(parseScripture(content));
                 entry.setTopics(parseTopics(content));
-                result.add(entry);            
+                result.add(entry);
+                updater.update(entry);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
@@ -269,11 +276,18 @@ public class Parser {
         return result;
     }
     
-    
+    /**
+     * sets the filePath to be parsed 
+     * @param filePath 
+     */
     void setFilePath(String filePath) {
         this.filePath = filePath;
     }
     
+    /**
+     * returns the value of the current filePath to be parsed
+     * @return filePath
+     */
     String getFilePath() {
         return filePath;
     }

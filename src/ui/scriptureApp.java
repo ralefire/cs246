@@ -27,7 +27,7 @@ import scripturefinder.Journal;
  */
 public class scriptureApp extends Application {
     
-    private TextArea txtContent = new TextArea();
+    private final TextArea txtContent = new TextArea();
     private TextArea txtTerminal = new TextArea();
     private TextArea txtAddEntry = new TextArea();
     private VBox leftMenu = new VBox();

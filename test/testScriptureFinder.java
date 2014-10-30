@@ -1,8 +1,12 @@
 /*
- * Scripture Test Suite
+ * ScriptureFinder Test Suite
  */
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
@@ -12,8 +16,6 @@ import org.testng.annotations.Test;
 import scripturefinder.Entry;
 import scripturefinder.Parser;
 import scripturefinder.Scripture;
-import scripturefinder.Journal;
-import scripturefinder.UserInterface;
 import scripturefinder.XMLparser;
 import scripturefinder.Report;
 
@@ -25,18 +27,14 @@ public class testScriptureFinder {
     
     public testScriptureFinder() {
     }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
     
     @Test
     public void scriptureTest() {
-            Scripture s = new Scripture("Moses", 1, 39, 0);
+            Scripture s = new Scripture("Moses", 1, 39, 40);
             Assert.assertEquals(s.getBook(), "Moses");
             Assert.assertEquals(s.getChapter(), 1);
             Assert.assertEquals(s.getVerseStart(), 39);
-            Assert.assertEquals(s.getVerseStart(), 0);
+            Assert.assertEquals(s.getVerseEnd(), 40);
     }
     
     @Test
@@ -44,24 +42,28 @@ public class testScriptureFinder {
             Scripture s = new Scripture();
             s.setBook("Moses");
             s.setChapter(1);
-            s.setVerses(39, 0);
+            s.setVerses(39, 39);
             
             Assert.assertEquals(s.getBook(), "Moses");
             Assert.assertEquals(s.getChapter(), 1);
             Assert.assertEquals(s.getVerseStart(), 39);
-            Assert.assertEquals(s.getVerseStart(), 0);
+            Assert.assertEquals(s.getVerseEnd(), 39);
     }
     
     @Test
     public void entryTest() {
- /*       Date date = new Date(2014, 5, 29);
-        Entry e = new Entry("This is content 2 Nephi 3:7 \n", date, "topic", "The Title");
+        Date date = new Date(2014, 5, 29);
+        List<String> topics = new ArrayList();
+        topics.add("faith");
+        topics.add("charity");
+        Entry e = new Entry("This is content 2 Nephi 3:7 \n", date, topics, "The Title");
         
         Assert.assertEquals(e.getDate(), date);
         Assert.assertEquals(e.getContent(), "This is content 2 Nephi 3:7 \n");
-        Assert.assertEquals(e.getTopic(), "topic");
+        Assert.assertEquals(e.getTopics().get(0), "faith");
+        Assert.assertEquals(e.getTopics().get(1), "charity");
         Assert.assertEquals(e.getTitle(), "The Title");
-   */ }
+    }
    
     @Test
     public void entryGetSetTest() {
@@ -70,12 +72,16 @@ public class testScriptureFinder {
         
         e.setDate(date);
         e.setTitle("The Title");
-       // e.setTopic("topic");
+        List<String> topics = new ArrayList();
+        topics.add("faith");
+        topics.add("charity");
+        e.setTopics(topics);
         e.setContent("This is content 2 Nephi 3:7 \n\n");
         
         Assert.assertEquals(e.getDate(), date);
         Assert.assertEquals(e.getContent(), "This is content 2 Nephi 3:7 \n\n");
-    //    Assert.assertEquals(e.getTopic(), "topic");
+        Assert.assertEquals(e.getTopics().get(0), "faith");
+        Assert.assertEquals(e.getTopics().get(1), "charity");
         Assert.assertEquals(e.getTitle(), "The Title");
     }
     
@@ -84,40 +90,34 @@ public class testScriptureFinder {
     
     @Test
     public void parseScriptureTest() {
-        Parser e = new Parser();
-     //   ArrayList<Scripture> s = e.parseScripture("I had an amazing thought from Abraham 1:2");
-    
-      //  Assert.assertEquals(s.get(0).getBook(), "Abraham");
-      //  Assert.assertEquals(s.get(0).getChapter(), 1);
-      //  Assert.assertEquals(s.get(0).getVerseStart(), 2);
+        try {
+            Parser e = new Parser();
+            List<Scripture> s = e.parseScripture("I had an amazing thought from Abraham 1:2");
+            Assert.assertEquals(s.get(0).getBook(), "Abraham");
+            Assert.assertEquals(s.get(0).getChapter(), 1);
+            Assert.assertEquals(s.get(0).getVerseStart(), 2);
+        } catch (IOException ex) {
+            Logger.getLogger(testScriptureFinder.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("parseScriptureTest failed");
+        }
     }
     
     @Test
-    public void parseScriptureExceptionTest() {
+    public void parseScriptureExceptionTest() throws IOException {
         Parser e = new Parser();
-       // ArrayList<Scripture> s = e.parseScripture("I had an amazing thought "
-       //         + "from Abra7ham 1@:2");
+        List<Scripture> s = e.parseScripture("I had an amazing thought "
+                + "from Abra7ham 1@:2");
     
-        //Assert.assertEquals(s.get(0).getBook(), null);
+        Assert.assertEquals(s.get(0).getBook(), null);
     } 
     
     @Test
-    public void parseTopicTest() {
+    public void parseTopicTest() throws IOException {
         Parser e = new Parser();
-       // ArrayList<String> s = e.parseTopics("I had an amazing thought from"
-       //         + " Abraham 1:2 about the Holy Ghost @'Holy Ghost'");
+        List<String> s = e.parseTopics("I had an amazing thought from"
+                + " Abraham 1:2 about the Holy Ghost @'Holy Ghost'");
     
-       // Assert.assertEquals(s.get(0), "Holy Ghost");
-    }
-    
-    @Test
-    public void parserValidFileTest() {
-        Parser e = new Parser();
-    //    e.setFileName("C:validFile.txt"); //valid file includes scripture
-    //    ArrayList<Scripture> s = e.parseScripture("I had an amazing thought"
-      //          + " from Abraham 1:2");
-    
-    //    Assert.assertEquals(s.get(0).getBook(), "Abraham");
+        Assert.assertEquals(s.get(0), "Holy Ghost");
     }
     
     @Test
@@ -162,21 +162,6 @@ public class testScriptureFinder {
         r.setNumEntries(3);
         r.incNumEntries();
         Assert.assertEquals(r.getNumScriptures(), 4);
-    }
-    
-    @Test
-    public void userInterfaceSearchTest() {
-        UserInterface u = new UserInterface();
-        
-        Date date = new Date(2014, 5, 29);
-      //  Entry e = new Entry("This is content 2 Nephi 3:7 \n", date, "topic", "The Title");
-        ArrayList<Entry> list = new ArrayList<>();
-    //    list.add(e);
-        u.setEntries(list);
-        
-        Assert.assertEquals(u.searchEntries(date), list);
-     //   Assert.assertEquals(u.searchEntries(e.getScriptures().get(0)), list);
-        Assert.assertEquals(u.searchEntries("topic"), list);
     }
     
 //    Tests that expect exceptions
