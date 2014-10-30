@@ -5,22 +5,22 @@
             <url>src/ui/scriptureApp.java</url>
             <bookmark id="1">
                 <name/>
-                <line>127</line>
+                <line>129</line>
                 <key/>
             </bookmark>
             <bookmark id="2">
                 <name/>
-                <line>151</line>
+                <line>149</line>
                 <key/>
             </bookmark>
             <bookmark id="4">
                 <name/>
-                <line>220</line>
+                <line>229</line>
                 <key/>
             </bookmark>
             <bookmark id="3">
                 <name/>
-                <line>226</line>
+                <line>235</line>
                 <key/>
             </bookmark>
         </file>
@@ -31,7 +31,6 @@
             <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/Journal.java</file>
             <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/Parser.java</file>
             <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/ui/Updater.java</file>
-            <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/Scripture.java</file>
             <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/ui/TextAreaUpdater.java</file>
             <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/ui/scriptureApp.java</file>
             <file>file:/C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder/Entry.java</file>

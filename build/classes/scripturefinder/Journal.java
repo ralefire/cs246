@@ -61,7 +61,7 @@ public class Journal implements Runnable {
             writer = new PrintWriter(fileName, "UTF-8");
             for (Entry entry : entries) {
                 writer.println("-----");
-                writer.println(entry.getDateAsString());
+                writer.println(entry.getDate().toString());
                 writer.println(entry.getContent());
                 }
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {

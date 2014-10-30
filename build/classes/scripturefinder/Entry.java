@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class Entry {
     private String content;
-    private Date date = new Date();
+    private Date date;
     private List<String> topics;
     private List<Scripture> scriptures;
     private String title;
@@ -151,17 +151,17 @@ public class Entry {
      * displays scriptures in the form book chap:verse-verse\n
      */
     public void display() {
-        scriptures.stream().forEach((s) -> {
+        for (Scripture s : scriptures) {
             s.display();
-        });
+        }
         
         System.out.println("Entry Date: " + date.toString());
         System.out.println("Scriptures: ");
         
         System.out.println("Topics:");
-        topics.stream().forEach((s) -> {
+        for (String s : topics) {
             System.out.println("\t" + s);
-        });
+        }
         
         System.out.println("Content:\n\t" + content);
     }
@@ -170,9 +170,9 @@ public class Entry {
      * Displays entry dates with their corresponding scripture list below
      */
     public void displayScripturesWithDates() {
-        scriptures.stream().forEach((s) -> {
+        for (Scripture s : scriptures) {
             s.display();
-        });
+        }
         
         System.out.println("Entry Date: " + date.toString());
         System.out.println("Scriptures: ");
