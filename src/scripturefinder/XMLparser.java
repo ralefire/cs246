@@ -1,11 +1,8 @@
-/*
- */
 package scripturefinder;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-//import java.util.Date;
 import java.sql.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,11 +21,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 /**
- *
- * @author Admin
+ * This handles the reading and exporting of XML files
+ * @author Cameron Lilly
  */
 public class XMLparser {
-       
+    
+    /**
+     * generates an XML document 
+     * @param entries
+     * @return Document object set with XML elements and attributes
+     * @throws ParserConfigurationException 
+     */
     public Document buildXMLDocument(List<Entry> entries) throws ParserConfigurationException {
         
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
@@ -42,7 +45,7 @@ public class XMLparser {
         // children element
         for (Entry entry : entries) {
             Element elemEntry = document.createElement("entry");
-            elemEntry.setAttribute("date", entry.getDate().toString());
+            elemEntry.setAttribute("date", entry.getDateAsString());
             
                     
             for (Scripture scripture : entry.getScriptures()) {
@@ -70,8 +73,13 @@ public class XMLparser {
         return document;
     }
     
+    /**
+     * This saves a formatted XML document into the specified fileName
+     * @param doc
+     * @param fileName
+     * @return true if no exceptions are thrown, false otherwise
+     */
     public Boolean saveXML(Document doc, String fileName) {
-                
         try {
             // create the xml file
             //transform the DOM Object to an XML File
@@ -82,28 +90,33 @@ public class XMLparser {
             DOMSource domSource = new DOMSource(doc);
             StreamResult streamResult = new StreamResult(new File(fileName));
             transformer.transform(domSource, streamResult);
-        } catch (TransformerConfigurationException ex) {
+        } catch (TransformerConfigurationException ex ) {
             Logger.getLogger(XMLparser.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException ex) {
-            Logger.getLogger(XMLparser.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        } catch (TransformerException exc ) {
+            Logger.getLogger(XMLparser.class.getName()).log(Level.SEVERE, null, exc);
+            return false;
         }
     
-        return null;
+        return true;
     }
     
-    public Boolean importXML(String input) {
-       return null;
-    }
-    
-    public List<Entry> parseXmlFile(String fileName) throws org.xml.sax.SAXException {
+    /**
+     * This parses an XML file for entries and their corresponding scriptures, topics, etc.
+     * then returns the entries in a list
+     * @param filePath
+     * @return list of entries
+     * @throws org.xml.sax.SAXException 
+     */
+    public List<Entry> parseXmlFile(String filePath) throws org.xml.sax.SAXException {
         
         List<Entry> entryList = new ArrayList(); 
 
         Document dom = null;
         
         //set default xml file location
-        if (fileName.equals("")) {
-            fileName = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder";
+        if (filePath.equals("")) {
+            filePath = "C:/Users/Admin/Documents/NetBeansProjects/ScriptureFinder/src/scripturefinder";
         }
         
         //get the document builder factory
@@ -114,8 +127,8 @@ public class XMLparser {
                 DocumentBuilder db = dbf.newDocumentBuilder();
                
                //parse using builder to get DOM representation of the XMLparser file
-               //dom = db.parse(ClassLoader.getSystemResourceAsStream(fileName));
-                File file = new File(fileName); //open file
+               //dom = db.parse(ClassLoader.getSystemResourceAsStream(filePath));
+                File file = new File(filePath); //open file
                 dom = db.parse(file);
 
             } catch(ParserConfigurationException | IOException pce) {
@@ -204,10 +217,5 @@ public class XMLparser {
             }
 	}
         return entryList;
-    }
-    
-   
-    public Boolean exportDocx() {
-       return null;
     }
 }
