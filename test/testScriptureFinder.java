@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
 import scripturefinder.Entry;
 import scripturefinder.Parser;
 import scripturefinder.Scripture;
-import scripturefinder.XMLparser;
 import scripturefinder.Report;
 
 /**
@@ -118,20 +117,6 @@ public class testScriptureFinder {
                 + " Abraham 1:2 about the Holy Ghost @'Holy Ghost'");
     
         Assert.assertEquals(s.get(0), "Holy Ghost");
-    }
-    
-    @Test
-    public void xmlFileReadTest() {
-        XMLparser reader = new XMLparser();
-        boolean success = reader.importXML("C:myDoc");
-        Assert.assertEquals(success, true);
-    }
-    
-    @Test
-    public void xmlFileCreateTest() {
-        XMLparser reader = new XMLparser();
-        boolean success = reader.exportDocx();
-        Assert.assertEquals(success, true);
     }
     
     @Test
