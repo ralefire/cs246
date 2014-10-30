@@ -62,6 +62,8 @@ public class scriptureApp extends Application {
         
         /* Bottom Menu */
         
+        // Bottom Menu Styles
+        bottomMenu.setPadding(new Insets(10, 5, 5, 5));
         // Terminal Label
         // Journal entry label
         Label labelTerminal = new Label("Terminal");
@@ -74,7 +76,7 @@ public class scriptureApp extends Application {
         redirectSystemStreams();
         
         /* LeftMenu Items */
-        leftMenu.setStyle("-fx-background-color: #666666");
+        leftMenu.setStyle("-fx-background-color: #CCD8ED");
         leftMenu.setMinWidth(100);
         
         //load txt file
@@ -221,17 +223,6 @@ public class scriptureApp extends Application {
                 System.out.println("Adding new entry failed.\n");
             }
             
-           
-            
-            /*
-            for (Entry entry : journal.getEntries()) {
-                text += entry.getDateAsString() + "\n";
-                text += entry.getContent() + "\n\n";
-            }
-            
-            txtContent.setText(text);
-            */
-            
             txtAddEntry.clear();
         });
         centerMenu.getChildren().add(btnNewEntry);
@@ -248,12 +239,18 @@ public class scriptureApp extends Application {
         btnSortDate.setOnAction((ActionEvent event) -> {
             System.out.println("Sorting by date.");
             sortType = 0;
-            String text = "";
-            for (Entry entry : journal.getEntries()) {
-                text += entry.getDateAsString() + "\n";
-                text += entry.getContent() + "\n\n";
+            if (journal.getEntries().isEmpty()) {
+                System.out.println("Nothing to sort. Try adding new entries.");
+            } else {
+                String text = "";
+                for (Entry entry : journal.getEntries()) {
+                    text += entry.getDateAsString() + "\n";
+                    text += entry.getContent() + "\n\n";
+                }
+                
+                txtContent.setText(text);
             }
-            txtContent.setText(text);
+            
         });
         rightMenu.getChildren().add(btnSortDate);
         
@@ -263,7 +260,11 @@ public class scriptureApp extends Application {
         btnSortScriptures.setOnAction((ActionEvent event) -> {
             sortType = 1;
             System.out.println("Sorting by scripture");
-            txtContent.setText(journal.sortByScriptures());
+            if (journal.getEntries().isEmpty()) {
+                System.out.println("Nothing to sort. Try adding new entries.");
+            } else {
+                txtContent.setText(journal.sortByScriptures());
+            }
         });
         rightMenu.getChildren().add(btnSortScriptures);
         
@@ -273,7 +274,11 @@ public class scriptureApp extends Application {
         btnSortTopic.setOnAction((ActionEvent event) -> {
             sortType = 2;
             System.out.println("Sorting by topic");
-            txtContent.setText(journal.sortByTopics());
+            if (journal.getEntries().isEmpty()) {
+                System.out.println("Nothing to sort. Try adding new entries.");
+            } else {
+                txtContent.setText(journal.sortByTopics());
+            }
         });
         rightMenu.getChildren().add(btnSortTopic);
         
