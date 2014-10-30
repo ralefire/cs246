@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,7 +22,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import scripturefinder.Entry;
 import scripturefinder.Journal;
-import scripturefinder.Scripture;
 
 /**
  *
@@ -81,6 +79,7 @@ public class scriptureApp extends Application {
         btnLoadJournal.setOnAction((ActionEvent event) -> {
             FileChooser chooser = new FileChooser();
             File file = chooser.showOpenDialog(primaryStage);
+            txtContent.clear();
             
             if (file != null) {
                 String fileName = file.getPath();
@@ -97,30 +96,26 @@ public class scriptureApp extends Application {
         Button btnLoadXML = new Button();
         btnLoadXML.setMinWidth(leftMenu.getMinWidth());
         btnLoadXML.setText("Load XML File");
-        btnLoadXML.setOnAction(new EventHandler<ActionEvent>() {
+        btnLoadXML.setOnAction((ActionEvent event) -> {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showOpenDialog(primaryStage);
             
-            @Override
-            public void handle(ActionEvent event) {
-                FileChooser chooser = new FileChooser();
-                File file = chooser.showOpenDialog(primaryStage);              
+            if (file != null) {
+                String fileName = file.getPath();              
                 
-                if (file != null) {
-                    String fileName = file.getPath();
-                    
-                    if (journal.loadFromXMLFile(fileName)) {
-                        System.out.println("Loading XML File... success!\n");
-                    } else {
-                        System.out.println("Error loading XML file \n");
-                    }
-
-                    String text = "";
-                    for (Entry entry : journal.getEntries()) {
-                        text += entry.getDateAsString() + "\n";
-                        text += entry.getContent() + "\n\n";
-                    }
-                    
-                    txtContent.setText(text);
+                if (journal.loadFromXMLFile(fileName)) {
+                    System.out.println("Loading XML File... success!\n");
+                } else {
+                    System.out.println("Error loading XML file \n");
                 }
+                
+                String text = "";
+                for (Entry entry : journal.getEntries()) {
+                    text += entry.getDateAsString() + "\n";
+                    text += entry.getContent() + "\n\n";
+                }
+                
+                txtContent.setText(text);
             }
         });
         leftMenu.getChildren().add(btnLoadXML);
@@ -129,21 +124,17 @@ public class scriptureApp extends Application {
         Button btnSaveAsXML = new Button();
         btnSaveAsXML.setMinWidth(leftMenu.getMinWidth());
         btnSaveAsXML.setText("SaveAs XML");
-        btnSaveAsXML.setOnAction(new EventHandler<ActionEvent>() {
+        btnSaveAsXML.setOnAction((ActionEvent event) -> {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showSaveDialog(primaryStage);
             
-            @Override
-            public void handle(ActionEvent event) {
-                FileChooser chooser = new FileChooser();
-                File file = chooser.showSaveDialog(primaryStage);     
+            if (file != null) {
+                String fileName = file.getPath();     
                 
-                if (file != null) {
-                    String fileName = file.getPath();
-                    
-                    if (journal.exportXMLFile(fileName)) {
-                        System.out.println("SaveAs XML File success!\n");
-                    } else {
-                        System.out.println("Error saving XML file.\n");
-                    }
+                if (journal.exportXMLFile(fileName)) {
+                    System.out.println("SaveAs XML File success!\n");
+                } else {
+                    System.out.println("Error saving XML file.\n");
                 }
             }
         });
@@ -153,21 +144,17 @@ public class scriptureApp extends Application {
         Button btnSaveAsTXT = new Button();
         btnSaveAsTXT.setMinWidth(leftMenu.getMinWidth());
         btnSaveAsTXT.setText("SaveAs TXT");
-        btnSaveAsTXT.setOnAction(new EventHandler<ActionEvent>() {
+        btnSaveAsTXT.setOnAction((ActionEvent event) -> {
+            FileChooser chooser = new FileChooser();
+            File file = chooser.showSaveDialog(primaryStage);
             
-            @Override
-            public void handle(ActionEvent event) {
-                FileChooser chooser = new FileChooser();
-                File file = chooser.showSaveDialog(primaryStage);     
+            if (file != null) {
+                String fileName = file.getPath();     
                 
-                if (file != null) {
-                    String fileName = file.getPath();
-                    
-                    if (journal.exportTXTFile(fileName)) {
-                        System.out.println("SaveAs TXT File success!\n");
-                    } else {
-                        System.out.println("Error saving XML file.\n");
-                    }
+                if (journal.exportTXTFile(fileName)) {
+                    System.out.println("SaveAs TXT File success!\n");
+                } else {
+                    System.out.println("Error saving XML file.\n");
                 }
             }
         });
@@ -178,6 +165,7 @@ public class scriptureApp extends Application {
         // centerMenu Styles
         centerMenu.setPadding(new Insets(0, 0, 0, 10));
         
+        
         // Journal entry label
         Label labelJournalEntries = new Label("Journal Entries");
         centerMenu.getChildren().add(labelJournalEntries);
@@ -185,6 +173,8 @@ public class scriptureApp extends Application {
         // Journal Entry Content area
         txtContent.setPrefColumnCount(40);
         txtContent.setPrefRowCount(25);
+        txtContent.setWrapText(true);
+        txtContent.setMinWidth(200);
         centerMenu.getChildren().add(txtContent);
         
         // Create new Entry Label
@@ -200,21 +190,17 @@ public class scriptureApp extends Application {
         // New Entry Button
         Button btnNewEntry = new Button();
         btnNewEntry.setText("Add Entry");
-        btnNewEntry.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Adding Entry");
-                String content = txtAddEntry.getText();
-                journal.addEntry(content);
-                String text = "";
-                for (Entry entry : journal.getEntries()) {
-                    text += entry.getDateAsString() + "\n";
-                    text += entry.getContent() + "\n\n";
-                }
-                txtContent.setText(text);
-                txtAddEntry.clear();
+        btnNewEntry.setOnAction((ActionEvent event) -> {
+            System.out.println("Adding Entry");
+            String content = txtAddEntry.getText();
+            journal.addEntry(content);
+            String text = "";
+            for (Entry entry : journal.getEntries()) {
+                text += entry.getDateAsString() + "\n";
+                text += entry.getContent() + "\n\n";
             }
+            txtContent.setText(text);
+            txtAddEntry.clear();
         });
         centerMenu.getChildren().add(btnNewEntry);
         
@@ -227,50 +213,38 @@ public class scriptureApp extends Application {
         // Sort by Date Button
         Button btnSortDate = new Button();
         btnSortDate.setText("Date");
-        btnSortDate.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Sorting by date.");
-                String text = "";
-                for (Entry entry : journal.getEntries()) {
-                    text += entry.getDateAsString() + "\n";
-                    text += entry.getContent() + "\n\n";
-                }
-                txtContent.setText(text);
+        btnSortDate.setOnAction((ActionEvent event) -> {
+            System.out.println("Sorting by date.");
+            String text = "";
+            for (Entry entry : journal.getEntries()) {
+                text += entry.getDateAsString() + "\n";
+                text += entry.getContent() + "\n\n";
             }
+            txtContent.setText(text);
         });
         rightMenu.getChildren().add(btnSortDate);
         
         // Sort by Scriptures Button
         Button btnSortScriptures = new Button();
         btnSortScriptures.setText("Scripture");
-        btnSortScriptures.setOnAction(new EventHandler<ActionEvent>() {
+        btnSortScriptures.setOnAction((ActionEvent event) -> {
+            System.out.println("Sorting by scripture");
+            txtContent.setText(journal.sortByScriptures());
             
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Sorting by scriptures.");
-                txtContent.setText(journal.sortByScriptures());
-                
 //                for (Entry e : journal.getEntries()) {
 //                    for (Scripture s : e.getScriptures()) {
 //                        System.out.println(s.getAsString());
 //                    }
 //                }
-            }
         });
         rightMenu.getChildren().add(btnSortScriptures);
         
         // Sort by Topic Button
         Button btnSortTopic = new Button();
         btnSortTopic.setText("Topic");
-        btnSortTopic.setOnAction(new EventHandler<ActionEvent>() {
-            
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Sorting by Topic.");
-                txtContent.setText(journal.sortByTopics());
-            }
+        btnSortTopic.setOnAction((ActionEvent event) -> {
+            System.out.println("Sorting by topic");
+            txtContent.setText(journal.sortByTopics());
         });
         rightMenu.getChildren().add(btnSortTopic);
         
