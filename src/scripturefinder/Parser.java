@@ -32,7 +32,7 @@ public class Parser {
      * @return list of scriptures
      * @throws IOException 
      */
-    public List<Scripture> parseScripture(String input) throws IOException {
+    public List<Scripture> parseScriptures(String input) throws IOException {
         List<Scripture> scriptureList = new ArrayList();
         Properties props = new ReadValidFiles().getProps();
         String scripturesPath = props.getProperty("validScripturesPath");
@@ -181,7 +181,7 @@ public class Parser {
                                                                        
                     if (line != null) {
                         entry.setContent(content);
-                        entry.setScriptures(parseScripture(content));
+                        entry.setScriptures(parseScriptures(content));
                         entry.setTopics(parseTopics(content));
                         result.add(entry);
                         Thread.sleep(500);
@@ -198,7 +198,7 @@ public class Parser {
             //Add the last entry if needed
             if (startEntry == true) {
                 entry.setContent(content);
-                entry.setScriptures(parseScripture(content));
+                entry.setScriptures(parseScriptures(content));
                 entry.setTopics(parseTopics(content));
                 result.add(entry);
             }
@@ -243,14 +243,14 @@ public class Parser {
                                                                        
                     if (line != null) {
                         entry.setContent(content);
-                        entry.setScriptures(parseScripture(content));
+                        entry.setScriptures(parseScriptures(content));
                         entry.setTopics(parseTopics(content));
                         result.add(entry);
-                        Thread.sleep(500);
                         updater.update(entry);
                         entry = new Entry();
                         content = "";
                         startEntry = false;
+                        Thread.sleep(500);
                     } 
                 } else if ((line = in.readLine()) != null) {
                 } else {
@@ -261,10 +261,11 @@ public class Parser {
             //Add the last entry if needed
             if (startEntry == true) {
                 entry.setContent(content);
-                entry.setScriptures(parseScripture(content));
+                entry.setScriptures(parseScriptures(content));
                 entry.setTopics(parseTopics(content));
                 result.add(entry);
                 updater.update(entry);
+                Thread.sleep(500);
             }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Parser.class.getName()).log(Level.SEVERE, null, ex);
@@ -274,6 +275,21 @@ public class Parser {
         }      
         
         return result;
+    }
+    
+    /**
+     * This takes a string and parses out a single entry
+     * @param content
+     * @return return an entry parsed from the input content
+     * @throws IOException 
+     */
+    public Entry parseContent(String content) throws IOException {
+        Entry resultEntry = new Entry();
+        resultEntry.setTopics(parseTopics(content));
+        resultEntry.setScriptures(parseScriptures(content));
+        resultEntry.setContent(content);
+        
+        return resultEntry;
     }
     
     /**

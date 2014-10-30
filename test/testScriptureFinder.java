@@ -91,7 +91,7 @@ public class testScriptureFinder {
     public void parseScriptureTest() {
         try {
             Parser e = new Parser();
-            List<Scripture> s = e.parseScripture("I had an amazing thought from Abraham 1:2");
+            List<Scripture> s = e.parseScriptures("I had an amazing thought from Abraham 1:2");
             Assert.assertEquals(s.get(0).getBook(), "Abraham");
             Assert.assertEquals(s.get(0).getChapter(), 1);
             Assert.assertEquals(s.get(0).getVerseStart(), 2);
@@ -104,7 +104,7 @@ public class testScriptureFinder {
     @Test
     public void parseScriptureExceptionTest() throws IOException {
         Parser e = new Parser();
-        List<Scripture> s = e.parseScripture("I had an amazing thought "
+        List<Scripture> s = e.parseScriptures("I had an amazing thought "
                 + "from Abra7ham 1@:2");
     
         Assert.assertEquals(s.get(0).getBook(), null);

@@ -276,15 +276,20 @@ public class Journal implements Runnable {
      * @param content 
      */
     public void addEntry(String content) {
+        Parser parser = new Parser();
         try {
-            Parser parser = new Parser(); //create parser object
-            List<String> topics = parser.parseTopics(content);
-            List<Scripture> scriptures = parser.parseScripture(content);
-            Entry entry = new Entry(content, topics, scriptures);
-            entries.add(entry);
+            entries.add(parser.parseContent(content));
         } catch (IOException ex) {
             System.out.println("Adding entry failed");
         }
+    }
+    
+    /**
+     * add entry to journal 
+     * @param entry 
+     */
+    public void addEntry(Entry entry) {
+        entries.add(entry);
     }
     
     /**

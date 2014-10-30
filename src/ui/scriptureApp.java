@@ -1,5 +1,6 @@
 /*
  * ScriptureFinder Application used to record and search scriptures in a journal
+ * includes main function
  */
 package ui;
 
@@ -20,6 +21,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import scripturefinder.Entry;
 import scripturefinder.Journal;
+import scripturefinder.Parser;
 
 /**
  * This is the GUI for the scripture finder application
@@ -34,6 +36,7 @@ public class scriptureApp extends Application {
     private VBox centerMenu = new VBox();
     private VBox bottomMenu = new VBox();
     private VBox rightMenu = new VBox();
+    private int sortType = 0;
     
     /**
      * Load all graphical pieces and set up event listeners
@@ -196,12 +199,39 @@ public class scriptureApp extends Application {
             System.out.println("Adding Entry");
             String content = txtAddEntry.getText();
             journal.addEntry(content);
+            
             String text = "";
+            Parser parser = new Parser();
+            try {
+                switch(sortType) {
+                    case 1:
+                        txtContent.setText(journal.sortByScriptures());
+                        break;
+                    case 2:
+                        txtContent.setText(journal.sortByTopics());
+                        break;
+                    default:
+                        Entry entry = parser.parseContent(content);
+                        text += entry.getDateAsString() + "\n";
+                        text += entry.getContent() + "\n";
+                        txtContent.appendText(text);
+                        break;
+                }
+            } catch (IOException ex) {
+                System.out.println("Adding new entry failed.\n");
+            }
+            
+           
+            
+            /*
             for (Entry entry : journal.getEntries()) {
                 text += entry.getDateAsString() + "\n";
                 text += entry.getContent() + "\n\n";
             }
+            
             txtContent.setText(text);
+            */
+            
             txtAddEntry.clear();
         });
         centerMenu.getChildren().add(btnNewEntry);
@@ -217,6 +247,7 @@ public class scriptureApp extends Application {
         btnSortDate.setText("Date");
         btnSortDate.setOnAction((ActionEvent event) -> {
             System.out.println("Sorting by date.");
+            sortType = 0;
             String text = "";
             for (Entry entry : journal.getEntries()) {
                 text += entry.getDateAsString() + "\n";
@@ -230,6 +261,7 @@ public class scriptureApp extends Application {
         Button btnSortScriptures = new Button();
         btnSortScriptures.setText("Scripture");
         btnSortScriptures.setOnAction((ActionEvent event) -> {
+            sortType = 1;
             System.out.println("Sorting by scripture");
             txtContent.setText(journal.sortByScriptures());
         });
@@ -239,6 +271,7 @@ public class scriptureApp extends Application {
         Button btnSortTopic = new Button();
         btnSortTopic.setText("Topic");
         btnSortTopic.setOnAction((ActionEvent event) -> {
+            sortType = 2;
             System.out.println("Sorting by topic");
             txtContent.setText(journal.sortByTopics());
         });

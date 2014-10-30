@@ -49,7 +49,7 @@ public class Entry {
      */
     public Entry() {
         content = "";
-        date = null;
+        date = new Date();
         topics = null;
         title = "";
         scriptures = null;

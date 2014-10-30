@@ -45,7 +45,7 @@ public class XMLparser {
         // children element
         for (Entry entry : entries) {
             Element elemEntry = document.createElement("entry");
-            elemEntry.setAttribute("date", entry.getDateAsString());
+            elemEntry.setAttribute("date", entry.getDate().toString());
             
                     
             for (Scripture scripture : entry.getScriptures()) {
